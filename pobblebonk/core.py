@@ -210,6 +210,15 @@ def work(self:Pob, worker:str='tick', at:float=None, limit:int=100, when:dict=No
     return out
 
 @patch
+def _budget(self:Pob, job) -> int:
+    """The attempt budget honker actually stored for `job`.
+
+    A claimed `Job` reports `max_attempts=3` whatever the row says, and `Job.retry` enforces no
+    limit of its own, so a budget read off the object silently truncates to three."""
+    r = first(self.db.query('SELECT max_attempts FROM _honker_live WHERE id=?', [job.id]))
+    return int((r or {}).get('max_attempts') or job.max_attempts or 1)
+
+@patch
 def _run(self:Pob, job, at:int, fire_at:int=None) -> AttrDict:
     'One fire: gather its list, call the callback, keep the answer, leave a note.'
     p = AttrDict(job.payload or {})
@@ -228,7 +237,7 @@ def _run(self:Pob, job, at:int, fire_at:int=None) -> AttrDict:
         # honker's `fail` dead-letters outright, so the attempt budget is spent here: retry with a
         # doubling delay while attempts remain, and only then let the fire die
         err = f'{type(e).__name__}: {e}'
-        left = max(0, (job.max_attempts or 1) - job.attempts)
+        left = max(0, self._budget(job) - job.attempts)
         if left > 0 and job.retry(int(backoff(job.attempts, self.base)), err):
             return AttrDict(name=name, status='retry', error=err, attempt=job.attempts,
                             attempts_left=left, after=backoff(job.attempts, self.base))
