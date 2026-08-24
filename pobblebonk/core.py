@@ -210,38 +210,47 @@ def work(self:Pob, worker:str='tick', at:float=None, limit:int=100, when:dict=No
     return out
 
 @patch
-def _budget(self:Pob, job) -> int:
-    """The attempt budget honker actually stored for `job`.
+def _row(self:Pob, job) -> AttrDict:
+    """What honker actually stored for `job`.
 
-    A claimed `Job` reports `max_attempts=3` whatever the row says, and `Job.retry` enforces no
-    limit of its own, so a budget read off the object silently truncates to three."""
-    r = first(self.db.query('SELECT max_attempts FROM _honker_live WHERE id=?', [job.id]))
-    return int((r or {}).get('max_attempts') or job.max_attempts or 1)
+    A claimed `Job` reports `max_attempts=3`, `created_at=0` and `run_at=0` whatever the row says,
+    so anything read off the object is a guess. `Job.retry` enforces no budget of its own either,
+    which is why the row has to be read rather than trusted from the object.
+    """
+    return AttrDict(first(self.db.query('SELECT * FROM _honker_live WHERE id=?', [job.id])) or {})
 
 @patch
 def _run(self:Pob, job, at:int, fire_at:int=None) -> AttrDict:
     'One fire: gather its list, call the callback, keep the answer, leave a note.'
     p = AttrDict(job.payload or {})
     name = p.get('schedule') or ''
+    row = self._row(job)
     if (fn := self.runners.get(name)) is None:
         job.fail(err := f'no callback registered for {name!r}')
+        # a note, because a schedule nobody wired up is exactly the kind of thing to fail silently
+        self.note(name, err, ref=job.id, dead=True)
         return AttrDict(name=name, status='error', error=err)
     got = self.items(p.needs) if p.get('needs') else L()
     if p.get('needs') and not got:
         job.ack()
         return AttrDict(name=name, status='skipped', why=f'the {p.needs} list is empty')
     # `list`, not `items`: `AttrDict.items` is the dict method, and a callback would get that
-    fire = AttrDict(p, at=at, fire_at=ifnone(fire_at, job.created_at), list=got, job=job.id)
+    # the row's `run_at`, not `job.created_at`, which a claimed Job reports as 0. A retry has no
+    # `fire_at` from the tick, and a callback that formats the time deserves better than 1970
+    fire = AttrDict(p, at=at, fire_at=ifnone(fire_at, row.get('run_at') or at), list=got, job=job.id)
     try: res = fn(fire)
     except Exception as e:
         # honker's `fail` dead-letters outright, so the attempt budget is spent here: retry with a
         # doubling delay while attempts remain, and only then let the fire die
         err = f'{type(e).__name__}: {e}'
-        left = max(0, self._budget(job) - job.attempts)
+        left = max(0, int(row.get('max_attempts') or job.max_attempts or 1) - job.attempts)
         if left > 0 and job.retry(int(backoff(job.attempts, self.base)), err):
             return AttrDict(name=name, status='retry', error=err, attempt=job.attempts,
                             attempts_left=left, after=backoff(job.attempts, self.base))
         job.fail(err)
+        # the last word on a fire that is never coming back. Without this you find out by noticing
+        # that your Wednesday cart has been empty for a month
+        self.note(name, f'gave up after {job.attempts} tries. {err}', ref=job.id, dead=True)
         return AttrDict(name=name, status='error', error=err, attempt=job.attempts)
     self.q.save_result(job.id, res)
     if got: self.used(got.attrgot('id'), by=name)
