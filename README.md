@@ -52,7 +52,10 @@ pob.lists.add('shopping', 'oat milk')
 
 pob.scheds.add('cart', 'Fill my cart from the shopping list.',
                cron='0 20 * * 3', tz='Asia/Kolkata', needs='shopping', policy='write')
+pob
 ```
+
+    Pob(1 schedules, 0 ready, 0 dead, 0 notes)
 
 `tick` is what a cron entry calls. It fires what is due, runs it, and leaves the answer.
 
@@ -61,11 +64,19 @@ out = pob.tick(at=wed)
 out.ran[0].status, out.ran[0].result
 ```
 
+    ('ok',
+     {'text': 'added 6 items, no oat milk',
+      'items': 2,
+      'session': 'fake-1',
+      'refused': []})
+
 Next time you type anything, in any editor, the note is there. Each reader sees it once.
 
 ``` python
 pob.drain('leela')[0].body
 ```
+
+    'added 6 items, no oat milk'
 
 ## A roundup that remembers last week
 
@@ -74,9 +85,12 @@ what makes a trend cheap: the agent still has last week.
 
 ``` python
 pob.scheds.add('git roundup', 'Roundup my commits today and say how that compares with last week.',
-               cron='0 17 * * *', tz='Asia/Kolkata')
-pob.scheds.get('git roundup')['session']    # filled in after the first fire, and reused after that
+               cron='0 17 * * *', tz='Asia/Kolkata', start=wed)
+pob.tick(at=wed)
+pob.scheds.get('git roundup')['session']    # kept after the first fire, and reused by the next
 ```
+
+    'fake-1'
 
 ## A digest that needs to know your interests
 
@@ -92,17 +106,21 @@ pob2.scheds.add('news', 'The news that matters, based on my interests.',
 pob2.tick(at=1).blocked, pob2.inbox.notes(kind='blocked')[0].title
 ```
 
+    (['news'], 'news needs your interests list')
+
 ``` python
 pob2.lists.add('interests', 'sanskrit grammar')
 out = pob2.tick(at=90_000)
 out.freed, len(out.fired)
 ```
 
+    (['news'], 1)
+
 ## What is in it
 
 | module | what it holds |
 |----|----|
-| [`core`](00_core.ipynb) | the vault, and the small `Store` the four tables are built on |
+| [`core`](00_core.ipynb) | the vault, and the small [`Store`](https://vedicreader.github.io/pobblebonk/core.html#store) the four tables are built on |
 | [`queue`](01_queue.ipynb) | at-least-once work: retries, leases, a dead letter, and what each run answered |
 | [`clock`](02_clock.ipynb) | durations, cron in a named zone, and the catch-up policy |
 | [`lists`](03_lists.ipynb) | the piles you add to, and who is allowed to empty them |
