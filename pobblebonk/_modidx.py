@@ -26,5 +26,6 @@ d = { 'settings': { 'branch': 'main',
                                  'pobblebonk.core.Pob.used': ('core.html#pob.used', 'pobblebonk/core.py'),
                                  'pobblebonk.core.Pob.work': ('core.html#pob.work', 'pobblebonk/core.py'),
                                  'pobblebonk.core._note': ('core.html#_note', 'pobblebonk/core.py'),
+                                 'pobblebonk.core.backoff': ('core.html#backoff', 'pobblebonk/core.py'),
                                  'pobblebonk.core.clip': ('core.html#clip', 'pobblebonk/core.py'),
                                  'pobblebonk.core.secs': ('core.html#secs', 'pobblebonk/core.py')}}}
