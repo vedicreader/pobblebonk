@@ -6,3 +6,4 @@ __pycache__/
 *.egg-info/
 sidebar.yml
 .pytest_cache/
+.kosha/

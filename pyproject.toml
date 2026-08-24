@@ -5,12 +5,12 @@ build-backend = "hatchling.build"
 [project]
 name = "pobblebonk"
 dynamic = ["version"]
-description = "the clock and the notebook for an agent: a durable queue, schedules, lists and notes in one SQLite vault"
+description = "the clock and the notebook for an agent: schedules, lists and notes on honker, in one file"
 readme = "README.md"
 requires-python = ">=3.12"
 license = {text = "Apache-2.0"}
 authors = [{name = "Karthik", email = "karthik.rajgopal@hotmail.com"}]
-keywords = ['nbdev', 'sqlite', 'queue', 'cron', 'scheduler', 'jobs', 'reminders', 'agents', 'acp']
+keywords = ['nbdev', 'sqlite', 'honker', 'cron', 'scheduler', 'reminders', 'agents', 'acp']
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
@@ -22,16 +22,9 @@ classifiers = [
     "Topic :: Software Development :: Libraries",
 ]
 dependencies = [
-    "litesearch>=0.1.25",
+    "honker>=0.5.0",
     "fastcore>=2.2.14",
-    "croniter>=2.0",
 ]
-
-[project.optional-dependencies]
-acp = ["agent-client-protocol>=0.12.1"]
-
-[project.scripts]
-pob = "pobblebonk.cli:main"
 
 [project.entry-points.nbdev]
 pobblebonk = "pobblebonk._modidx:d"
@@ -52,4 +45,4 @@ include = ["/pobblebonk", "/README.md", "/pyproject.toml"]
 path = "pobblebonk/__init__.py"
 
 [dependency-groups]
-dev = ["pobblebonk[acp]", "nbdev>=3.3.12", "notebook>=7.6.1", "pytest>=8.0.0", "slopometer>=0.0.1"]
+dev = ["nbdev>=3.3.12", "notebook>=7.6.1", "slopometer>=0.0.1"]

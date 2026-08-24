@@ -5,185 +5,298 @@
 
 > the clock and the notebook for an agent
 
-pobblebonk remembers what you asked for and when it is due. It does not do the work. One SQLite
-file holds four things: a durable queue, your schedules, the lists you add to over a week, and the
-notes waiting for you. An agent does the rest.
+pobblebonk remembers what you asked for and when it is due. It does not do the work. You register
+a callback and it gets called on a cadence, with whatever you have piled up for it since last time.
 
-It exists because two jobs get mixed up. Running a reminder is one job. Telling you about it is
-another, and the second is harder. In the Agent Client Protocol the editor asks first and the
-agent answers. An agent cannot start a turn. So nothing outside your editor can put a 5pm roundup
-into the conversation you have open.
+[honker](https://github.com/russellromney/honker) does the heavy lifting. It brings the queue, the
+scheduler table, the retries and the streams with a cursor per reader. All of it lives in one
+SQLite file, reached through SQL functions.
 
-pobblebonk runs a fire on its own instead. It keeps the answer and leaves a note. Each place you
-work picks that note up on its next turn.
+pobblebonk is the three things honker has not got. A pile you add to over a week. A gate that
+stops a fire when its pile is empty. And the callback.
+
+There is no daemon. `honker_scheduler_tick(now)` is a SQL function, so a cron entry is the whole
+scheduler.
 
 ## Install
 
 ``` sh
-uv add pobblebonk        # add pobblebonk[acp] for the ACP runner
+uv add pobblebonk
 ```
 
-## The shape of it
+## A callback, on a cadence
 
-    you                    pobblebonk                  an agent
-    ---                    ----------                  --------
-    add to a list  ------>  pob_items
-    write a schedule ---->  pob_schedules
-                            |
-    cron, once a minute --> tick ---> jobs ----------> one prompt over ACP
-                                       |                    |
-                            pob_notes <-- the answer -------+
-                            |
-    type anything <--------- drain
-
-## A week of shopping, and Wednesday night
-
-Send things to a list whenever you think of them. Write the schedule once.
+Register the callback, write the schedule, call `tick`. Whatever the callback returns becomes the
+note you read later.
 
 ``` python
-from datetime import datetime
-from zoneinfo import ZoneInfo
+import time
 
-wed = datetime(2026, 8, 26, 20, 1, tzinfo=ZoneInfo('Asia/Kolkata')).timestamp()
+pob = Pob()
+beats = []
 
-pob = Pob().attach(FakeRunner(['added 6 items, no oat milk']))
-pob.lists.add('shopping', 'yoghurt, the greek one', meta=dict(photo='img_2201.heic'))
-pob.lists.add('shopping', 'oat milk')
+@pob.on('heartbeat')
+def beat(fire):
+    beats.append(fire.fire_at)
+    return f'beat {len(beats)} at {fire.fire_at}'
 
-pob.scheds.add('cart', 'Fill my cart from the shopping list.',
-               cron='0 20 * * 3', tz='Asia/Kolkata', needs='shopping', policy='write')
-pob
+pob.add('heartbeat', every='1s')
+for _ in range(3):
+    time.sleep(1.05)
+    pob.tick()
+
+beats
 ```
 
-    Pob(1 schedules, 0 ready, 0 dead, 0 notes)
-
-`tick` is what a cron entry calls. It fires what is due, runs it, and leaves the answer.
+`fire.fire_at` is honker’s own boundary, not the moment the callback ran, so the gaps say whether
+the cadence held.
 
 ``` python
-out = pob.tick(at=wed)
-out.ran[0].status, out.ran[0].result
+[b-a for a, b in zip(beats, beats[1:])]
 ```
 
-    ('ok',
-     {'text': 'added 6 items, no oat milk',
-      'items': 2,
-      'session': 'fake-1',
-      'refused': []})
-
-Next time you type anything, in any editor, the note is there. Each reader sees it once.
+The answers are waiting as notes, and each place you read from gets them once.
 
 ``` python
-pob.drain('leela')[0].body
+pob.drain('leela').attrgot('body')
 ```
 
-    'added 6 items, no oat milk'
-
-## A roundup that remembers last week
-
-Keep the session the agent hands back and tomorrow’s fire continues the same conversation. That is
-what makes a trend cheap: the agent still has last week.
-
 ``` python
-pob.scheds.add('git roundup', 'Roundup my commits today and say how that compares with last week.',
-               cron='0 17 * * *', tz='Asia/Kolkata', start=wed)
-pob.tick(at=wed)
-pob.scheds.get('git roundup')['session']    # kept after the first fire, and reused by the next
+pob.drain('leela'), len(pob.drain('phone'))
 ```
 
-    'fake-1'
+## Real work, on a schedule
 
-## A digest that needs to know your interests
-
-Nothing can ask you a question at 7am. So a schedule that needs a list it has not got does not
-run, and does not guess. It says what is missing, once, and starts again on its own when the list
-fills.
+A callback is a plain function, so it can do anything. This one shells out to git.
 
 ``` python
-pob2 = Pob().attach(FakeRunner())
-pob2.scheds.add('news', 'The news that matters, based on my interests.',
-                every='1d', needs='interests', start=0)
+import subprocess
 
-pob2.tick(at=1).blocked, pob2.inbox.notes(kind='blocked')[0].title
+pob2 = Pob()
+
+@pob2.on('git roundup')
+def roundup(fire):
+    out = subprocess.run(['git', 'log', '--oneline', '--since=30 days ago'],
+                         capture_output=True, text=True).stdout.strip().splitlines()
+    return f'{len(out)} commits in the last 30 days'
+
+pob2.add('git roundup', cron='0 17 * * *')      # 5pm daily
+time.sleep(1.05)
+pob2.tick(at=int(time.time()) + 86400).ran[0].result
 ```
 
-    (['news'], 'news needs your interests list')
+## A pile the callback reads
+
+Push things whenever you think of them. The fire reads the pile as `fire.list`, and the items are
+marked used only if the callback returned. A run that raised leaves your milk on the list.
 
 ``` python
-pob2.lists.add('interests', 'sanskrit grammar')
-out = pob2.tick(at=90_000)
-out.freed, len(out.fired)
+pob3 = Pob()
+
+@pob3.on('cart')
+def cart(fire):
+    return 'added: ' + ', '.join(i.text for i in fire.list)
+
+pob3.add('cart', cron='0 20 * * 3', needs='shopping')     # 8pm on Wednesdays
+pob3.push('shopping', 'yoghurt, the greek one', key='img_2201.heic')
+pob3.push('shopping', 'yoghurt, the greek one', key='img_2201.heic')   # the same photo twice
+pob3.push('shopping', 'oat milk')
+pob3.items('shopping').attrgot('text')
 ```
 
-    (['news'], 1)
+``` python
+time.sleep(1.05)
+got = pob3.tick(at=int(time.time()) + 7*86400).ran[0]
+got.status, got.result, got.used
+```
 
-## What is in it
-
-| module | what it holds |
-|----|----|
-| [`core`](00_core.ipynb) | the vault, and the small [`Store`](https://vedicreader.github.io/pobblebonk/core.html#store) the four tables are built on |
-| [`queue`](01_queue.ipynb) | at-least-once work: retries, leases, a dead letter, and what each run answered |
-| [`clock`](02_clock.ipynb) | durations, cron in a named zone, and the catch-up policy |
-| [`lists`](03_lists.ipynb) | the piles you add to, and who is allowed to empty them |
-| [`inbox`](04_inbox.ipynb) | notes, with a cursor per reader |
-| [`schedule`](05_schedule.ipynb) | the standing instruction, and the tick that fires it |
-| [`run`](06_run.ipynb) | handing one fire to an ACP agent, and keeping what it said |
-| [`pob`](07_pob.ipynb) | all four on one vault |
-| [`cli`](08_cli.ipynb) | `pob tick`, and the commands for looking |
-
-## What is deliberately not in it
-
-No daemon and no broker. Whoever has the file does the work. Something that already exists calls
-`pob tick`: a cron entry, a launchd plist, a systemd timer, a button.
-
-No driving. pobblebonk owns the clock, not the work. A runner is anything callable that takes a
-prompt and answers with text. Nothing here imports the agent it starts.
-
-No lock table. The data settles two ticks racing. One `BEGIN IMMEDIATE` covers reading a schedule
-and advancing it, and each fire is queued under `<schedule>:<fire time>`, which a unique index
-refuses twice. Four processes ticking at once queue one job.
-
-No push. `tick` finds what is due. Millisecond wakeups on commit are
-[honker](https://github.com/russellromney/honker). A weekly reminder does not need them.
-
-## Sharing a vault
-
-Every class takes a database rather than opening one. Hand it a vault that
-[litesearch](https://github.com/Karthik777/litesearch) already has open. The queue then shares that
-connection, its lock and its transaction. A document write and the job it caused commit together,
-and roll back together.
+With the list empty there is nothing to do and nothing to report, so the next fire is skipped
+rather than failed.
 
 ``` python
-from litesearch import Index
-ix = Index('vault.db')
-pob = Pob(db=ix.db)          # one file, one transaction
+time.sleep(1.05)
+nxt = pob3.tick(at=int(time.time()) + 14*86400).ran[0]
+nxt.status, nxt.why
+```
+
+## A local model as the callback
+
+Anything callable works, so a model is one line. This needs a LiteRT model on disk, so it is not
+run when these docs are built.
+
+``` python
+import rishi
+
+pob4 = Pob()
+
+@pob4.on('news')
+def digest(fire):
+    chat = rishi.Chat('litert-community/gemma-4-E2B-it-litert-lm')
+    topics = ', '.join(i.text for i in fire.list)
+    return str(chat(f'Name one thing worth reading about each of: {topics}. One line each.'))
+
+pob4.add('news', cron='0 7 * * *', needs='interests')
+pob4.push('interests', 'sanskrit grammar')
+pob4.push('interests', 'sqlite internals')
+pob4.tick()
+```
+
+## Ramabana over ACP
+
+The one worth wiring up. `AcpRunner` starts an ACP agent for one fire, sends the prompt, keeps the
+answer and closes. It is an example rather than part of the package, because pobblebonk owns the
+clock and not the work.
+
+The Agent Client Protocol is the reason a note exists at all. The editor asks first and the agent
+answers, and an agent cannot start a turn of its own. So nothing outside your editor can put a
+5pm roundup into the conversation you have open. A fire runs its own agent instead, and the note
+reaches you the next time you type anywhere.
+
+``` python
+import asyncio, os
+from pathlib import Path
+import acp
+from acp.schema import AgentMessageChunk, AllowedOutcome, DeniedOutcome, RequestPermissionResponse
+from fastcore.all import store_attr
+
+WRITE_KINDS = ('edit', 'delete', 'move', 'execute')   # what a `read` policy refuses
+
+class Fire:
+    "The client side of one fire: collect the reply, answer permission from policy."
+    def __init__(self, policy='read'): self.policy, self.text, self.refused = policy, [], []
+
+    async def session_update(self, session_id, update, **kw):
+        if isinstance(update, AgentMessageChunk):
+            if t := getattr(getattr(update, 'content', None), 'text', None): self.text.append(t)
+
+    async def request_permission(self, session_id, tool_call, options, **kw):
+        # nobody is awake to answer a dialog, so the policy answers it
+        kind = str(getattr(tool_call, 'kind', '') or '')
+        ok = self.policy == 'write' or kind not in WRITE_KINDS
+        if not ok: self.refused.append(f"{getattr(tool_call, 'title', '') or kind} ({kind})")
+        want = 'allow' if ok else 'reject'
+        opt = next((o for o in (options or []) if str(o.option_id).startswith(want)), None)
+        if opt is None: return RequestPermissionResponse(outcome=DeniedOutcome(outcome='cancelled'))
+        return RequestPermissionResponse(
+            outcome=AllowedOutcome(outcome='selected', option_id=opt.option_id))
+
+    async def read_text_file(self, session_id, path, line=None, limit=None, **kw):
+        raise acp.RequestError.method_not_found('fs/read_text_file')
+    async def write_text_file(self, session_id, path, content, **kw):
+        raise acp.RequestError.method_not_found('fs/write_text_file')
+```
+
+``` python
+class AcpRunner:
+    "One fire against an ACP agent, started for it and closed after it."
+    def __init__(self, cmd='ramabana-acp', args=(), cwd=None, env=None, policy='read', timeout=900):
+        store_attr()
+        self.sessions = {}     # schedule name -> the conversation it continues
+
+    def __call__(self, fire):
+        return asyncio.run(asyncio.wait_for(self._go(fire), self.timeout))
+
+    async def _go(self, fire):
+        cl, name = Fire(fire.get('policy') or self.policy), fire.get('schedule') or ''
+        root = str(self.cwd or Path.cwd())
+        async with acp.spawn_agent_process(cl, self.cmd, *self.args,
+                                           env=dict(self.env or os.environ)) as (conn, _):
+            await conn.initialize(protocol_version=acp.PROTOCOL_VERSION, client_capabilities=None)
+            # yesterday's conversation, so today can say "down from last week"
+            sid = self.sessions.get(name)
+            if sid:
+                try: await conn.load_session(cwd=root, session_id=sid)
+                except Exception: sid = None
+            if not sid: sid = (await conn.new_session(cwd=root)).session_id
+            self.sessions[name] = sid
+            res = await conn.prompt(session_id=sid, prompt=[acp.text_block(self.prompt_for(fire))])
+        out = ''.join(cl.text).strip()
+        if cl.refused: out += f"\n\nRefused under `{cl.policy}`: " + ', '.join(cl.refused)
+        # raise rather than return nothing: honker retries the fire and the pile keeps its items
+        if not out or getattr(res, 'stop_reason', '') != 'end_turn':
+            raise RuntimeError(f'the agent gave no answer (stop_reason='
+                               f'{getattr(res, "stop_reason", "?")!r})')
+        return out
+
+    def prompt_for(self, fire):
+        "The standing instruction, then whatever the pile holds."
+        out = [str(fire.get('prompt') or fire.get('schedule') or '')]
+        if len(fire.get('list') or []):
+            out.append(f"\nThe {fire['needs']} list holds {len(fire['list'])} item(s):")
+            out += [f"- {i['text']}" for i in fire['list']]
+        return '\n'.join(out)
+```
+
+Run against Ramabana on a local Gemma E2B LiteRT model, one fire took 38 seconds on CPU and the
+note read `oat milk and greek yoghurt`. Ramabana’s own briefing is about 4,200 tokens, so a
+window under 8k rejects the turn before the model sees your prompt.
+
+It raises when the turn gave nothing back, so honker retries the fire and the pile keeps its
+items. One thing it cannot do is tell an answer from an agent that reported its own failure in
+prose. That comes back as a note saying so, and the items are marked used.
+
+Wiring it up is two lines. `prompt` and `policy` are just keys on the schedule, because `add`
+keeps whatever you give it and the callback reads it back off the fire.
+
+``` python
+pob5 = Pob('~/.pobblebonk/vault.db')
+pob5.on('cart')(AcpRunner('ramabana-acp', args=('--model', 'gemma-e2b')))
+pob5.add('cart', cron='0 20 * * 3', needs='shopping', policy='write',
+         prompt='Fill my cart from the shopping list.')
 ```
 
 ## The tick
 
-Once a minute is plenty, and a tick with nothing due is one indexed read.
+The tick has to run where the callbacks are, so it is your script rather than a command pobblebonk
+ships. Four lines:
 
-``` sh
-* * * * * pob tick --db ~/.pobblebonk/vault.db
+``` python
+# tick.py
+from pobblebonk.core import Pob
+pob = Pob('~/.pobblebonk/vault.db')
+
+@pob.on('cart')
+def cart(fire): return 'added: ' + ', '.join(i.text for i in fire.list)
+
+if __name__ == '__main__': print(pob.tick())
 ```
 
-A laptop shut for nine days comes back with nine missed fires. Each schedule’s `catchup` decides
-what happens to them.
+Once a minute is plenty. A tick with nothing due is one SQL call.
 
-- `once` runs the latest and forgets the rest. This is the default.
+``` sh
+* * * * * cd ~/myapp && uv run python tick.py
+```
+
+On a Mac, launchd wants a `StartInterval` of 60 in a plist. On Linux, a systemd timer with
+`OnCalendar=minutely`.
+
+A laptop shut for nine days comes back with nine missed fires. `catchup` decides what happens to
+them.
+
+- `once` runs the latest and cancels the rest. This is the default.
 - `all` runs every one.
-- `skip` runs none and only moves the clock on.
 
 The default is `once` for a reason. Reopening a laptop after a holiday should not empty the whole
 week into your cart.
 
+## Sharing the file
+
+Every method takes a honker database rather than opening one, so pobblebonk can live in a file
+something else already has open. The fire and the write that caused it then commit together.
+
+``` python
+import honker
+db = honker.open('app.db')
+pob = Pob(db=db)
+```
+
 ## Develop
 
 ``` sh
-uv sync --all-extras --group dev
-uv run nbdev-export      # notebooks -> pobblebonk/*.py
-uv run nbdev-test        # execute every notebook
-uv run pytest            # the plain-python suite
+uv sync --group dev
+uv run nbdev-export      # nbs/00_core.ipynb -> pobblebonk/core.py
+uv run nbdev-test        # run every notebook, which is the whole test suite
 uv run nbdev-clean       # before committing
 ```
 
-`nbs/*.ipynb` is the source. Every module in `pobblebonk/` is generated and says so at the top.
+`nbs/00_core.ipynb` is the source and the tests. There is no `tests/` directory.
