@@ -1,0 +1,55 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pobblebonk"
+dynamic = ["version"]
+description = "the clock and the notebook for an agent: a durable queue, schedules, lists and notes in one SQLite vault"
+readme = "README.md"
+requires-python = ">=3.12"
+license = {text = "Apache-2.0"}
+authors = [{name = "Karthik", email = "karthik.rajgopal@hotmail.com"}]
+keywords = ['nbdev', 'sqlite', 'queue', 'cron', 'scheduler', 'jobs', 'reminders', 'agents', 'acp']
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries",
+]
+dependencies = [
+    "litesearch>=0.1.25",
+    "fastcore>=2.2.14",
+    "croniter>=2.0",
+]
+
+[project.optional-dependencies]
+acp = ["agent-client-protocol>=0.12.1"]
+
+[project.scripts]
+pob = "pobblebonk.cli:main"
+
+[project.entry-points.nbdev]
+pobblebonk = "pobblebonk._modidx:d"
+
+[project.urls]
+Repository = "https://github.com/vedicreader/pobblebonk"
+Documentation = "https://vedicreader.github.io/pobblebonk/"
+
+[tool.nbdev]
+
+[tool.hatch.build.targets.wheel]
+packages = ["pobblebonk"]
+
+[tool.hatch.build.targets.sdist]
+include = ["/pobblebonk", "/README.md", "/pyproject.toml"]
+
+[tool.hatch.version]
+path = "pobblebonk/__init__.py"
+
+[dependency-groups]
+dev = ["pobblebonk[acp]", "nbdev>=3.3.12", "notebook>=7.6.1", "pytest>=8.0.0", "slopometer>=0.0.1"]

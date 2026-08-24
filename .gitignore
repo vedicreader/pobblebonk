@@ -1,0 +1,8 @@
+_docs/
+_proc/
+.venv/
+__pycache__/
+.ipynb_checkpoints/
+*.egg-info/
+sidebar.yml
+.pytest_cache/

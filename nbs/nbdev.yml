@@ -1,0 +1,14 @@
+project:
+  output-dir: _docs
+
+website:
+  title: "pobblebonk"
+  site-url: "https://vedicreader.github.io/pobblebonk"
+  description: "the clock and the notebook for an agent: a durable queue, schedules, lists and notes in one SQLite vault"
+  repo-branch: main
+  repo-url: "https://github.com/vedicreader/pobblebonk"
+
+format-links:
+  - html
+  - format: commonmark
+    text: Markdown
