@@ -45,4 +45,8 @@ include = ["/pobblebonk", "/README.md", "/pyproject.toml"]
 path = "pobblebonk/__init__.py"
 
 [dependency-groups]
-dev = ["nbdev>=3.3.12", "notebook>=7.6.1", "slopometer>=0.0.1"]
+dev = [
+    "nbdev>=3.3.12",
+    "notebook>=7.6.1",
+    "slopometer>=0.0.1",
+]
