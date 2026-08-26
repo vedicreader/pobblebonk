@@ -154,7 +154,7 @@ results = pob.work(worker='scheduler', limit=100)
 
 A fire retries with exponential backoff when its callback raises. The default attempt budget is three. Set `retries` on [`Pob`](https://vedicreader.github.io/pobblebonk/core.html#pob) or on one schedule. After the final attempt, the fire is dead-lettered and a note records the error.
 
-`catchup='once'` keeps the latest fire missed while the machine was off. This is the default. `catchup='all'` keeps every missed fire.
+`catchup='once'` keeps the latest fire missed while the machine was off. This is the default. `catchup='all'` keeps every missed fire, and a positive integer keeps that many of the most recent. `start=` sets the first fire; without it the cadence picks the next boundary from now.
 
 Use `tick(run=False)` when scheduling and callback execution belong in separate processes. It queues due fires without running them. `work` claims and runs queued fires.
 
