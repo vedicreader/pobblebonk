@@ -40,21 +40,29 @@ for _ in range(3):
 beats
 ```
 
+    [1787735375, 1787735376, 1787735377]
+
 `fire.fire_at` is the scheduled boundary, not the time the callback happened. The one-second gaps show that the cadence held.
 
 ``` python
 [b-a for a, b in zip(beats, beats[1:])]
 ```
 
+    [1, 1]
+
 `drain` returns the notes a reader has not seen. Each reader has an independent cursor.
 
 ``` python
-pob.drain('leela').attrgot('body')
+pob.drain('leela')
 ```
+
+    [{'title': 'heartbeat', 'body': 'beat 1 at 1787735375', 'ref': 1, 'used': 0, 'offset': 1}, {'title': 'heartbeat', 'body': 'beat 2 at 1787735376', 'ref': 2, 'used': 0, 'offset': 2}, {'title': 'heartbeat', 'body': 'beat 3 at 1787735377', 'ref': 3, 'used': 0, 'offset': 3}]
 
 ``` python
 pob.drain('leela'), len(pob.drain('phone'))
 ```
+
+    ([], 3)
 
 ## Run ordinary Python
 
@@ -76,6 +84,8 @@ time.sleep(1.05)
 pob2.tick(at=int(time.time()) + 86400).ran[0].result
 ```
 
+    '7 commits in the last 30 days'
+
 ## Give a callback a durable list
 
 `push` adds an item to a named list. A schedule with `needs` runs only when that list is not empty. Its callback receives the open items as `fire.list`.
@@ -96,11 +106,15 @@ pob3.push('shopping', 'oat milk')
 pob3.items('shopping').attrgot('text')
 ```
 
+    ['yoghurt, the greek one', 'oat milk']
+
 ``` python
 time.sleep(1.05)
 got = pob3.tick(at=int(time.time()) + 7*86400).ran[0]
 got.status, got.result, got.used
 ```
+
+    ('ok', 'added: yoghurt, the greek one, oat milk', 2)
 
 When the list is empty, the next fire is `skipped`. It is not a callback failure and produces no note.
 
@@ -109,6 +123,8 @@ time.sleep(1.05)
 nxt = pob3.tick(at=int(time.time()) + 14*86400).ran[0]
 nxt.status, nxt.why
 ```
+
+    ('skipped', 'the shopping list is empty')
 
 ## Use a model callback
 
@@ -121,15 +137,20 @@ pob4 = Pob()
 
 @pob4.on('news')
 def digest(fire):
-    chat = rishi.Chat('litert-community/gemma-4-E2B-it-litert-lm')
+    chat = rishi.Chat('gpt-4.1')
     topics = ', '.join(i.text for i in fire.list)
-    return str(chat(f'Name one thing worth reading about each of: {topics}. One line each.'))
+    return rishi.resp_text(chat(f'Name one thing worth reading about each of: {topics}. One line each.'))
 
-pob4.add('news', cron='0 7 * * *', needs='interests')
+pob4.add('news', every='1s', needs='interests')
 pob4.push('interests', 'sanskrit grammar')
 pob4.push('interests', 'sqlite internals')
-pob4.tick()
+time.sleep(1.05)
+pob4.tick().ran[0].result.split('\n')
 ```
+
+    ['**Sanskrit grammar:** The Paninian system’s use of formal rules (sutras) and meta-rules (“meta-language”) is an early example of generative grammar, influencing modern linguistics.',
+     '',
+     '**SQLite internals:** SQLite’s “B-tree” storage and its zero-configuration, self-contained transactional engine reveal how complex data management can be achieved in a lightweight, embeddable database.']
 
 ## Operate schedules
 
@@ -141,6 +162,8 @@ pob4.update('news', cron='30 7 * * *', retries=5)
 pob4.resume('news')
 pob4.drop('news')
 ```
+
+    True
 
 ``` python
 # Queue due fires without running callbacks.
