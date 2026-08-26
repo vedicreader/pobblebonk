@@ -7,7 +7,7 @@
 
 `pobblebonk` adds callbacks, durable lists, and per-reader notes to [honker](https://github.com/russellromney/honker). Schedules, queued work, list items, retries, and notes share one SQLite file.
 
-There is no scheduler daemon. Call [`Pob.tick()`](https://vedicreader.github.io/pobblebonk/core.html#pob.tick) from cron, launchd, or a systemd timer. Each tick asks honker for due fires and runs their callbacks.
+There is no scheduler daemon. Call [`Pob.tick()`](https://vedicreader.github.io/pobblebonk/core.html#pob.tick) once a minute, and each tick asks honker for due fires and runs their callbacks. `pobblebonk.heartbeat` installs that minute in whatever this machine schedules with: cron, launchd, or Task Scheduler.
 
 ## Install
 
@@ -206,11 +206,23 @@ if __name__ == '__main__':
 
 Run it once a minute. A tick with nothing due is one SQL call.
 
-``` cron
-* * * * * cd ~/myapp && uv run python tick.py
+``` python
+from pobblebonk.heartbeat import install, installed, uninstall
+
+install('/home/k/.local/bin/uv run --directory /home/k/myapp python tick.py')
 ```
 
-Use a launchd `StartInterval` of 60 on macOS or a systemd timer with `OnCalendar=minutely` on Linux.
+[`install`](https://vedicreader.github.io/pobblebonk/heartbeat.html#install) writes `~/.pobblebonk/pobblebonk.sh`, schedules it every minute with whatever this machine has, and returns the path. A crontab line on Linux, a LaunchAgent on macOS, a Task Scheduler entry on Windows. Anything the tick prints goes to `~/.pobblebonk/pobblebonk.log`. [`installed()`](https://vedicreader.github.io/pobblebonk/heartbeat.html#installed) reads back what is really scheduled, [`uninstall()`](https://vedicreader.github.io/pobblebonk/heartbeat.html#uninstall) stops it, and installing a second time replaces the entry rather than adding to it.
+
+Only the minute is installed. Every real time stays in the database, where `pause`, `retries` and `catchup` can reach it.
+
+Give the command absolute paths. cron runs with almost no environment, and `uv` will not be on its `PATH`.
+
+The crontab backend needs `uv add 'pobblebonk[cron]'`. The line it writes is the one you would have written yourself:
+
+``` cron
+* * * * * /home/k/.pobblebonk/pobblebonk.sh # pobblebonk
+```
 
 ## Share an existing database
 
@@ -232,4 +244,4 @@ uv run nbdev-test
 uv run nbdev-clean
 ```
 
-`nbs/00_core.ipynb` contains the implementation and tests. `nbs/index.ipynb` generates this README.
+`nbs/00_core.ipynb` contains the implementation and tests, and `nbs/01_heartbeat.ipynb` the heartbeat. `nbs/index.ipynb` generates this README.
