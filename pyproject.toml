@@ -23,7 +23,7 @@ classifiers = [
 ]
 dependencies = [
     "honker>=0.5.0",
-    "fastcore>=2.2.14",
+    "fastcore>=2.2.15",
 ]
 
 [project.entry-points.nbdev]
