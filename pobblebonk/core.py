@@ -10,12 +10,14 @@ __all__ = ['FIRES', 'NOTES', 'RETRIES', 'BASE', 'MAX_TEXT', 'CATCHUP', 'secs', '
 
 # %% ../nbs/00_core.ipynb #8b4162b7
 import json, re, time
+from collections import Counter
 from pathlib import Path
 from tempfile import mkdtemp
 
 import honker
 from fastcore.all import AttrDict, L, first, ifnone, patch, dict2obj
 from honker import crontab, every_s
+
 
 # %% ../nbs/00_core.ipynb #2dc2cc67
 _DUR = re.compile(r'([\d.]+)\s*([smhdwMy])', re.I)
@@ -254,8 +256,9 @@ def tick(
     keep = {s.name: n for s in self.all() if (n := catchup_n(s.payload.get('catchup', 'once')))}
     dropped = {job_id for job_id in superseded(fires, keep) if self.q.cancel(job_id)}
     kept = fires.filter(lambda fire: fire['job_id'] not in dropped)
+    missed = dict(Counter(f['name'] for f in fires if f['job_id'] in dropped))
     fire_times = {fire['job_id']: fire['fire_at'] for fire in kept}
-    return dict2obj(dict(fired=kept,cancelled=len(dropped),ran=self.work(worker, at, when=fire_times) if run else L()))
+    return dict2obj(dict(fired=kept,cancelled=len(dropped),missed=missed,ran=self.work(worker, at, when=fire_times) if run else L()))
 
 
 # %% ../nbs/00_core.ipynb #65b5766a
