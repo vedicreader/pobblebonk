@@ -177,9 +177,9 @@ results = pob.work(worker='scheduler', limit=100)
 
 A fire retries with exponential backoff when its callback raises. The default attempt budget is three. Set `retries` on [`Pob`](https://vedicreader.github.io/pobblebonk/core.html#pob) or on one schedule. After the final attempt, the fire is dead-lettered and a note records the error.
 
-`catchup='once'` keeps the latest fire missed while the machine was off. This is the default. `catchup='all'` keeps every missed fire, and a positive integer keeps that many of the most recent. `start=` sets the first fire; without it the cadence picks the next boundary from now.
-
-Use `tick(run=False)` when scheduling and callback execution belong in separate processes. It queues due fires without running them. `work` claims and runs queued fires.
+`catchup='once'` keeps the latest fire missed while the machine was off. This is the default. `catchup='all'` keeps every missed fire, and a positive integer keeps that many of the
+most recent. `start=` sets the first fire; without it the cadence picks the next boundary
+from now.
 
 ``` python
 pob = Pob('~/.pobblebonk/pob.db', retries=3)
@@ -207,7 +207,7 @@ if __name__ == '__main__':
 Run it once a minute. A tick with nothing due is one SQL call.
 
 ``` cron
-* * * * * cd ~/myapp && uv run python tick.py
+    * cd ~/myapp && uv run python tick.py
 ```
 
 Use a launchd `StartInterval` of 60 on macOS or a systemd timer with `OnCalendar=minutely` on Linux.
