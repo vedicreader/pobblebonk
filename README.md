@@ -40,7 +40,7 @@ for _ in range(3):
 beats
 ```
 
-    [1787735375, 1787735376, 1787735377]
+    [1788060622, 1788060623, 1788060624]
 
 `fire.fire_at` is the scheduled boundary, not the time the callback happened. The one-second gaps show that the cadence held.
 
@@ -56,7 +56,7 @@ beats
 pob.drain('leela')
 ```
 
-    [{'title': 'heartbeat', 'body': 'beat 1 at 1787735375', 'ref': 1, 'used': 0, 'offset': 1}, {'title': 'heartbeat', 'body': 'beat 2 at 1787735376', 'ref': 2, 'used': 0, 'offset': 2}, {'title': 'heartbeat', 'body': 'beat 3 at 1787735377', 'ref': 3, 'used': 0, 'offset': 3}]
+    [{'title': 'heartbeat', 'body': 'beat 1 at 1788060622', 'ref': 1, 'used': 0, 'offset': 1}, {'title': 'heartbeat', 'body': 'beat 2 at 1788060623', 'ref': 2, 'used': 0, 'offset': 2}, {'title': 'heartbeat', 'body': 'beat 3 at 1788060624', 'ref': 3, 'used': 0, 'offset': 3}]
 
 ``` python
 pob.drain('leela'), len(pob.drain('phone'))
@@ -84,7 +84,7 @@ time.sleep(1.05)
 pob2.tick(at=int(time.time()) + 86400).ran[0].result
 ```
 
-    '7 commits in the last 30 days'
+    '17 commits in the last 30 days'
 
 ## Give a callback a durable list
 
@@ -148,9 +148,8 @@ time.sleep(1.05)
 pob4.tick().ran[0].result.split('\n')
 ```
 
-    ['**Sanskrit grammar:** The Paninian system’s use of formal rules (sutras) and meta-rules (“meta-language”) is an early example of generative grammar, influencing modern linguistics.',
-     '',
-     '**SQLite internals:** SQLite’s “B-tree” storage and its zero-configuration, self-contained transactional engine reveal how complex data management can be achieved in a lightweight, embeddable database.']
+    ['- **Sanskrit grammar:** The concept of *Sandhi*—how sounds combine at word boundaries—reveals the language’s precision and flexibility.',
+     '- **SQLite internals:** The B-tree structure in SQLite’s storage engine is central to how it efficiently manages and retrieves data on disk.']
 
 ## Operate schedules
 
@@ -185,6 +184,57 @@ Use `tick(run=False)` when scheduling and callback execution belong in separate 
 pob = Pob('~/.pobblebonk/pob.db', retries=3)
 pob.add('roundup', cron='0 17 * * *', catchup='once', retries=5)
 ```
+
+    RuntimeError: Database error: unable to open database file: ~/.pobblebonk/pob.db
+    [31m---------------------------------------------------------------------------[39m
+    [31mRuntimeError[39m                              Traceback (most recent call last)
+    [36mCell[39m[36m [39m[32mIn[13][39m[32m, line 2[39m
+    [32m      1[39m [38;5;66;03m#| eval: false[39;00m
+    [32m----> [39m[32m2[39m pob = Pob([33m'~/.pobblebonk/pob.db'[39m, retries=[32m3[39m)
+    [32m      3[39m pob.add([33m'roundup'[39m, cron=[33m'0 17 * * *'[39m, catchup=[33m'once'[39m, retries=[32m5[39m)
+
+    [36mFile [39m[32m~/code/pobblebonk/pobblebonk/core.py:65[39m, in [36mPob.__init__[39m[34m(self, path, db, retries, base)[39m
+    [32m     58[39m [38;5;28;01mdef[39;00m[38;5;250m [39m[34m__init__[39m([38;5;28mself[39m,
+    [32m     59[39m              path=[38;5;28;01mNone[39;00m,          [38;5;66;03m# the file; None makes a temporary one[39;00m
+    [32m     60[39m              db=[38;5;28;01mNone[39;00m,            [38;5;66;03m# or a honker database something else already opened[39;00m
+    [32m     61[39m              retries:[38;5;28mint[39m=RETRIES,[38;5;66;03m# attempts a failing fire gets before it is dead-lettered[39;00m
+    [32m     62[39m              base:[38;5;28mfloat[39m=BASE):   [38;5;66;03m# seconds before the first retry; doubles per attempt[39;00m
+    [32m     63[39m     [38;5;66;03m# honker watches `PRAGMA data_version` on a file, so `:memory:` is not an option[39;00m
+    [32m     64[39m     [38;5;28;01mif[39;00m db [38;5;129;01mis[39;00m [38;5;28;01mNone[39;00m [38;5;129;01mand[39;00m path [38;5;129;01mis[39;00m [38;5;28;01mNone[39;00m: path = Path(mkdtemp())/[33m'[39m[33mpob.db[39m[33m'[39m
+    [32m---> [39m[32m65[39m     [38;5;28mself[39m.db = db [38;5;28;01mif[39;00m db [38;5;129;01mis[39;00m [38;5;129;01mnot[39;00m [38;5;28;01mNone[39;00m [38;5;28;01melse[39;00m [30;43mhonker[39;49m[30;43m.[39;49m[30;43mopen[39;49m[30;43m([39;49m[30;43mstr[39;49m[30;43m([39;49m[30;43mpath[39;49m[30;43m)[39;49m[30;43m)[39;49m
+    [32m     66[39m     [38;5;28mself[39m.retries, [38;5;28mself[39m.base = [38;5;28mmax[39m([32m1[39m, [38;5;28mint[39m(retries)), [38;5;28mfloat[39m(base)
+    [32m     67[39m     [38;5;28mself[39m.q, [38;5;28mself[39m.stream = [38;5;28mself[39m.db.queue(FIRES), [38;5;28mself[39m.db.stream(NOTES)
+
+    [36mFile [39m[32m~/code/pobblebonk/.venv/lib/python3.13/site-packages/honker/_honker.py:1433[39m, in [36mopen[39m[34m(path, max_readers, watcher_backend, watcher_poll_interval_ms)[39m
+    [32m   1412[39m [38;5;28;01mdef[39;00m[38;5;250m [39m[34mopen[39m(
+    [32m   1413[39m     path: [38;5;28mstr[39m,
+    [32m   1414[39m     max_readers: [38;5;28mint[39m = [32m8[39m,
+    [32m   1415[39m     watcher_backend: Optional[[38;5;28mstr[39m] = [38;5;28;01mNone[39;00m,
+    [32m   1416[39m     watcher_poll_interval_ms: Optional[[38;5;28mint[39m] = [38;5;28;01mNone[39;00m,
+    [32m   1417[39m ) -> Database:
+    [32m   1418[39m [38;5;250m    [39m[33;03m"""Open a Honker database at `path`.[39;00m
+    [32m   1419[39m 
+    [32m   1420[39m [33;03m    `watcher_backend` selects the update-detection strategy:[39;00m
+    [32m   (...)[39m[32m   1431[39m [33;03m    when lower idle CPU matters more than lowest-latency wakeups.[39;00m
+    [32m   1432[39m [33;03m    """[39;00m
+    [32m-> [39m[32m1433[39m     [38;5;28;01mreturn[39;00m Database([30;43m_core_open[39;49m[30;43m([39;49m
+    [32m   1434[39m [30;43m        [39;49m[30;43mpath[39;49m[30;43m,[39;49m
+    [32m   1435[39m [30;43m        [39;49m[30;43mmax_readers[39;49m[30;43m=[39;49m[30;43mmax_readers[39;49m[30;43m,[39;49m
+    [32m   1436[39m [30;43m        [39;49m[30;43mwatcher_backend[39;49m[30;43m=[39;49m[30;43mwatcher_backend[39;49m[30;43m,[39;49m
+    [32m   1437[39m [30;43m        [39;49m[30;43mwatcher_poll_interval_ms[39;49m[30;43m=[39;49m[30;43mwatcher_poll_interval_ms[39;49m[30;43m,[39;49m
+    [32m   1438[39m [30;43m    [39;49m[30;43m)[39;49m)
+
+    [36mFile [39m[32m~/code/pobblebonk/.venv/lib/python3.13/site-packages/honker/_honker.py:23[39m, in [36m_core_open[39m[34m(path, max_readers, watcher_backend, watcher_poll_interval_ms)[39m
+    [32m     21[39m [38;5;28;01mdef[39;00m[38;5;250m [39m[34m_core_open[39m(path, max_readers, watcher_backend=[38;5;28;01mNone[39;00m, watcher_poll_interval_ms=[38;5;28;01mNone[39;00m):
+    [32m     22[39m     [38;5;28;01mfrom[39;00m[38;5;250m [39m[34;01mhonker[39;00m[34;01m.[39;00m[34;01m_honker_native[39;00m[38;5;250m [39m[38;5;28;01mimport[39;00m [38;5;28mopen[39m [38;5;28;01mas[39;00m _open
+    [32m---> [39m[32m23[39m     [38;5;28;01mreturn[39;00m [30;43m_open[39;49m[30;43m([39;49m
+    [32m     24[39m [30;43m        [39;49m[30;43mpath[39;49m[30;43m,[39;49m
+    [32m     25[39m [30;43m        [39;49m[30;43mmax_readers[39;49m[30;43m=[39;49m[30;43mmax_readers[39;49m[30;43m,[39;49m
+    [32m     26[39m [30;43m        [39;49m[30;43mwatcher_backend[39;49m[30;43m=[39;49m[30;43mwatcher_backend[39;49m[30;43m,[39;49m
+    [32m     27[39m [30;43m        [39;49m[30;43mwatcher_poll_interval_ms[39;49m[30;43m=[39;49m[30;43mwatcher_poll_interval_ms[39;49m[30;43m,[39;49m
+    [32m     28[39m [30;43m    [39;49m[30;43m)[39;49m
+
+    [31mRuntimeError[39m: Database error: unable to open database file: ~/.pobblebonk/pob.db
 
 ## Run the tick on a heartbeat
 
