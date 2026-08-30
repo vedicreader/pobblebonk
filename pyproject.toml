@@ -33,6 +33,11 @@ pobblebonk = "pobblebonk._modidx:d"
 Repository = "https://github.com/vedicreader/pobblebonk"
 Documentation = "https://vedicreader.github.io/pobblebonk/"
 
+[project.optional-dependencies]
+cron = [
+    "python-crontab>=3.2",
+]
+
 [tool.nbdev]
 
 [tool.hatch.build.targets.wheel]
