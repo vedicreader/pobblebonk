@@ -7,7 +7,7 @@
 
 `pobblebonk` adds callbacks, durable lists, and per-reader notes to [honker](https://github.com/russellromney/honker). Schedules, queued work, list items, retries, and notes share one SQLite file.
 
-There is no scheduler daemon. Call [`Pob.tick()`](https://vedicreader.github.io/pobblebonk/core.html#pob.tick) once a minute, and each tick asks honker for due fires and runs their callbacks. `pobblebonk.heartbeat` installs that minute in whatever this machine schedules with: cron, launchd, or Task Scheduler.
+There is no scheduler daemon. Call [`Pob.tick()`](https://vedicreader.github.io/pobblebonk/core.html#pob.tick) on a heartbeat, and each tick asks honker for due fires and runs their callbacks. `pobblebonk.heartbeat` installs that recurring call through cron, launchd, or Task Scheduler.
 
 ## Install
 
@@ -177,52 +177,62 @@ results = pob.work(worker='scheduler', limit=100)
 
 A fire retries with exponential backoff when its callback raises. The default attempt budget is three. Set `retries` on [`Pob`](https://vedicreader.github.io/pobblebonk/core.html#pob) or on one schedule. After the final attempt, the fire is dead-lettered and a note records the error.
 
-`catchup='once'` keeps the latest fire missed while the machine was off. This is the default. `catchup='all'` keeps every missed fire, and a positive integer keeps that many of the
-most recent. `start=` sets the first fire; without it the cadence picks the next boundary
-from now.
+`catchup='once'` keeps the latest fire missed while the machine was off. This is the default. `catchup='all'` keeps every missed fire, and a positive integer keeps that many of the most recent. `start=` sets the first fire; without it the cadence picks the next boundary from now.
+
+Use `tick(run=False)` when scheduling and callback execution belong in separate processes. It queues due fires without running them. `work` claims and runs queued fires.
 
 ``` python
 pob = Pob('~/.pobblebonk/pob.db', retries=3)
 pob.add('roundup', cron='0 17 * * *', catchup='once', retries=5)
 ```
 
-## Run the tick
+## Run the tick on a heartbeat
 
-The process that calls `tick` must register the callbacks first. A small script is enough.
+The application owns one [`Pob`](https://vedicreader.github.io/pobblebonk/core.html#pob) database and one tick script. The script registers every callback before it calls `tick`.
 
 ``` python
 # tick.py
 from pobblebonk.core import Pob
 
-pob = Pob('~/.pobblebonk/pob.db')
+pob = Pob('/absolute/path/to/pob.db')
 
 @pob.on('cart')
 def cart(fire):
     return 'added: ' + ', '.join(item.text for item in fire.list)
 
-if __name__ == '__main__':
-    print(pob.tick())
+if __name__ == '__main__': print(pob.tick())
 ```
 
-Run it once a minute. A tick with nothing due is one SQL call.
+Run the script once before scheduling it. This catches import and path errors directly.
+
+``` sh
+/absolute/path/to/uv run --directory /absolute/path/to/app python tick.py
+```
+
+Install one machine heartbeat after the script works. The command must use absolute paths because schedulers have a small environment.
 
 ``` python
 from pobblebonk.heartbeat import install, installed, uninstall
 
-install('/home/k/.local/bin/uv run --directory /home/k/myapp python tick.py')
+install('/absolute/path/to/uv run --directory /absolute/path/to/app python tick.py', every=300)
+installed()
 ```
 
-[`install`](https://vedicreader.github.io/pobblebonk/heartbeat.html#install) writes `~/.pobblebonk/pobblebonk.sh`, schedules it every minute with whatever this machine has, and returns the path. A crontab line on Linux, a LaunchAgent on macOS, a Task Scheduler entry on Windows. Anything the tick prints goes to `~/.pobblebonk/pobblebonk.log`. [`installed()`](https://vedicreader.github.io/pobblebonk/heartbeat.html#installed) reads back what is really scheduled, [`uninstall()`](https://vedicreader.github.io/pobblebonk/heartbeat.html#uninstall) stops it, and installing a second time replaces the entry rather than adding to it.
+[`install`](https://vedicreader.github.io/pobblebonk/heartbeat.html#install) creates `~/.pobblebonk/pobblebonk.sh` and schedules it every five minutes. `every` is seconds and defaults to 60. Portable values are whole minutes that divide an hour. Output is appended to `~/.pobblebonk/pobblebonk.log`. On Linux it installs a cron line. On macOS it installs a LaunchAgent. On Windows it installs a Task Scheduler job.
 
-Only the minute is installed. Every real time stays in the database, where `pause`, `retries` and `catchup` can reach it.
+The heartbeat only calls `tick`. Schedule times, retries, pauses, and catch-up policy stay in SQLite.
 
-Give the command absolute paths. cron runs with almost no environment, and `uv` will not be on its `PATH`.
+Inspect the log when a callback does not run. Remove the machine job when the application no longer needs it.
 
-The crontab backend needs `uv add 'pobblebonk[cron]'`. The line it writes is the one you would have written yourself:
+``` python
+from pathlib import Path
 
-``` cron
-* * * * * /home/k/.pobblebonk/pobblebonk.sh # pobblebonk
+print(Path.home().joinpath('.pobblebonk/pobblebonk.log').read_text())
+uninstall()
+assert installed() is None
 ```
+
+The Linux backend needs `uv add 'pobblebonk[cron]'`.
 
 ## Share an existing database
 
@@ -240,8 +250,8 @@ pob = Pob(db=db)
 ``` sh
 uv sync --group dev
 uv run nbdev-export
-uv run nbdev-test
+uv run --extra cron nbdev-test
 uv run nbdev-clean
 ```
 
-`nbs/00_core.ipynb` contains the implementation and tests, and `nbs/01_heartbeat.ipynb` the heartbeat. `nbs/index.ipynb` generates this README.
+`nbs/00_core.ipynb` contains schedules, lists, notes, and tick execution. `nbs/01_heartbeat.ipynb` contains the machine heartbeat. `nbs/index.ipynb` generates this README.
