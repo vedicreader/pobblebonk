@@ -236,6 +236,30 @@ pob.add('roundup', cron='0 17 * * *', catchup='once', retries=5)
 
     [31mRuntimeError[39m: Database error: unable to open database file: ~/.pobblebonk/pob.db
 
+## Long jobs
+
+A fire’s claim lasts `lease` seconds, five minutes by default. While a callback runs, pobblebonk renews the claim every third of the lease. A job that takes a day keeps its claim, and no other `work` runs it twice. If the worker dies, the renewing stops and the fire is claimable again after the lease.
+
+`batch` caps how many list items one fire takes. With `batch=1` each fire gets the oldest open item and marks only that one used. The rest wait for later fires. Inside a callback, `fire.note(body)` leaves a progress note whose `ref` is the fire’s job ID, and `fire.beat()` renews the claim by hand.
+
+``` python
+pob5 = Pob(lease=600)
+
+@pob5.on('render')
+def render(fire):
+    fire.note(f'starting {fire.list[0].text}')
+    return f'rendered {fire.list[0].text}'
+
+pob5.add('render', every='1s', needs='renders', batch=1)
+for t in ('Rudram', 'Chamakam'): pob5.push('renders', t)
+time.sleep(1.05)
+pob5.tick().ran.attrgot('result'), pob5.items('renders').attrgot('text')
+```
+
+    (['rendered Rudram'], ['Chamakam'])
+
+`drop_item(id)` deletes an open item, for a job cancelled before it starts.
+
 ## Run the tick on a heartbeat
 
 The application owns one [`Pob`](https://vedicreader.github.io/pobblebonk/core.html#pob) database and one tick script. The script registers every callback before it calls `tick`.

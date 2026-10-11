@@ -9,8 +9,9 @@ __all__ = ['FIRES', 'NOTES', 'RETRIES', 'BASE', 'MAX_TEXT', 'CATCHUP', 'secs', '
            'superseded']
 
 # %% ../nbs/00_core.ipynb #8b4162b7
-import json, re, time
+import json, re, threading, time
 from collections import Counter
+from contextlib import contextmanager
 from pathlib import Path
 from tempfile import mkdtemp
 
@@ -59,12 +60,13 @@ class Pob:
                  path=None,          # the file; None makes a temporary one
                  db=None,            # or a honker database something else already opened
                  retries:int=RETRIES,# attempts a failing fire gets before it is dead-lettered
-                 base:float=BASE):   # seconds before the first retry; doubles per attempt
+                 base:float=BASE,    # seconds before the first retry; doubles per attempt
+                 lease:int=300):     # seconds a claim lasts; a running callback renews it
         # honker watches `PRAGMA data_version` on a file, so `:memory:` is not an option
         if db is None and path is None: path = Path(mkdtemp())/'pob.db'
         self.db = db if db is not None else honker.open(str(path))
-        self.retries, self.base = max(1, int(retries)), float(base)
-        self.q, self.stream = self.db.queue(FIRES), self.db.stream(NOTES)
+        self.retries, self.base, self.lease = max(1, int(retries)), float(base), max(1, int(lease))
+        self.q, self.stream = self.db.queue(FIRES, visibility_timeout_s=self.lease), self.db.stream(NOTES)
         self.sched, self.runners = honker.Scheduler(self.db), {}
         with self.db.transaction() as tx:
             tx.execute('CREATE TABLE IF NOT EXISTS pob_items (id INTEGER PRIMARY KEY, topic TEXT, '
@@ -121,6 +123,12 @@ def catchup_n(v) -> int:
     if isinstance(v, int) and not isinstance(v, bool) and v > 0: return v
     raise ValueError(f"catchup must be 'once', 'all' or a positive int: {v!r}")
 
+def _batch(v):
+    "None, or the positive int of items a fire takes."
+    if v is None: return None
+    if isinstance(v, int) and not isinstance(v, bool) and v > 0: return v
+    raise ValueError(f'batch must be a positive int or None: {v!r}')
+
 @patch
 def add(self:Pob,
         name:str,             # what you call it; unique, and what a note is titled with
@@ -130,13 +138,14 @@ def add(self:Pob,
         catchup='once',       # `once` runs the latest missed fire, `all` every one, an int that many
         start:float=None,     # epoch seconds for the first fire; None lets the cadence pick it
         retries:int=None,     # attempts a failing fire gets; None -> the Pob's own
+        batch:int=None,       # items of `needs` one fire takes, oldest first; None takes them all
         **payload             # anything the callback wants
 ) -> AttrDict:
     'Write down a standing instruction.'
     if bool(cron) == bool(every): raise ValueError('a schedule needs one of `cron` or `every`')
     catchup_n(catchup)
     self.sched.add(name=str(name), queue=FIRES, payload=dict(
-        schedule=str(name), needs=needs, catchup=catchup, **payload),
+        schedule=str(name), needs=needs, catchup=catchup, batch=_batch(batch), **payload),
         schedule=crontab(cron) if cron else every_s(secs(every)),
         max_attempts=max(1, int(ifnone(retries, self.retries))))
     if start is not None: self.fire_at(name, start)
@@ -179,11 +188,12 @@ def update(self:Pob,
            every=None,        # or a new duration
            priority:int=None, # new queue priority
            retries:int=None,  # new attempt budget
-           **payload          # payload fields to add or replace
+           **payload          # payload fields to add or replace, `batch` among them
 ) -> AttrDict:
     'Change an existing schedule without replacing fields that are not given.'
     if cron is not None and every is not None: raise ValueError('a schedule update accepts only one of `cron` or `every`')
     if 'catchup' in payload: catchup_n(payload['catchup'])
+    if 'batch' in payload: _batch(payload['batch'])
     if (was := self.get(name)) is None: return None
     changes = {}
     if cron is not None: changes['schedule'] = crontab(cron)
@@ -215,9 +225,9 @@ def push(self:Pob,
 
 @patch
 def items(self:Pob, topic:str, limit:int=200) -> L:
-    'The open items on `topic`, oldest first.'
+    'The open items on `topic`, oldest first, in push order on a tie.'
     return L(self.db.query('SELECT * FROM pob_items WHERE topic=? AND used_at IS NULL '
-                           'ORDER BY at LIMIT ?', [str(topic), limit])).map(AttrDict)
+                           'ORDER BY at, id LIMIT ?', [str(topic), limit])).map(AttrDict)
 
 # %% ../nbs/00_core.ipynb #f156da8b
 @patch
@@ -229,6 +239,12 @@ def used(self:Pob, ids, by:str='', at:float=None) -> int:
         return len(tx.query(f'UPDATE pob_items SET used_at=?, used_by=? WHERE id IN ({qs}) '
                             'AND used_at IS NULL RETURNING id',
                             [ifnone(at, time.time()), str(by), *ids]))
+
+@patch
+def drop_item(self:Pob, id:int) -> bool:
+    'Delete an open item, a job cancelled before it starts.'
+    with self.db.transaction() as tx:
+        return bool(tx.query('DELETE FROM pob_items WHERE id=? AND used_at IS NULL RETURNING id', [int(id)]))
 
 # %% ../nbs/00_core.ipynb #708046dc
 def superseded(fires, keep) -> set:
@@ -293,29 +309,44 @@ def _done(self:Pob, job, name:str, got, res) -> AttrDict:
 
 # %% ../nbs/00_core.ipynb #b034d25c
 @patch
-def _fire(self:Pob, job, at:int, fire_at:int=None):
+def _fire(self:Pob, job, at:int, fire_at:int=None, worker:str=None):
     'Build the value passed to a fire callback.'
-    p, row = AttrDict(job.payload or {}), self._row(job)
-    got = self.items(p.needs) if p.get('needs') else L()
+    p, row, worker = AttrDict(job.payload or {}), self._row(job), ifnone(worker, job.worker_id)
+    got = self.items(p.needs, limit=p.get('batch') or 200) if p.get('needs') else L()
     fire_at = ifnone(fire_at, row.get('run_at') or at)
-    return AttrDict(p, at=at, fire_at=fire_at, list=got, job=job.id), row
+    beat = lambda: self.q.heartbeat(job.id, worker, extend_s=self.lease)
+    note = lambda body, **meta: self.note(p.get('schedule') or '', body, ref=job.id, **meta)
+    return AttrDict(p, at=at, fire_at=fire_at, list=got, job=job.id, worker=worker, beat=beat, note=note), row
+
+# %% ../nbs/00_core.ipynb #fa36a37e
+@contextmanager
+def _beating(q, job_id:int, worker:str, lease:int):
+    'Renew a claim every `lease/3` seconds until the block exits.'
+    stop = threading.Event()
+    def _beat():
+        while not stop.wait(lease/3): q.heartbeat(job_id, worker, extend_s=lease)
+    t = threading.Thread(target=_beat, name=f'pob.beat.{job_id}', daemon=True)
+    t.start()
+    try: yield t
+    finally: stop.set(); t.join()
 
 # %% ../nbs/00_core.ipynb #df9981a3
 @patch
-def _run(self:Pob, job, at:int, fire_at:int=None) -> AttrDict:
-    'Run one claimed fire.'
-    p = AttrDict(job.payload or {})
+def _run(self:Pob, job, at:int, fire_at:int=None, worker:str=None) -> AttrDict:
+    'Run one claimed fire, renewing its claim while the callback runs.'
+    p, worker = AttrDict(job.payload or {}), ifnone(worker, job.worker_id)
     name = p.get('schedule') or ''
     if (fn := self.runners.get(name)) is None:
         job.fail(err := f'no callback registered for {name!r}')
         self.note(name, err, ref=job.id, dead=True)
         return AttrDict(name=name, status='error', error=err)
-    fire, row = self._fire(job, at, fire_at)
+    fire, row = self._fire(job, at, fire_at, worker)
     got = fire.list
     if fire.get('needs') and not got:
         job.ack()
         return AttrDict(name=name, status='skipped', why=f'the {fire.needs} list is empty')
-    try: res = fn(fire)
+    try:
+        with _beating(self.q, job.id, worker, self.lease): res = fn(fire)
     except Exception as e: return self._failed(job, row, name, e)
     return self._done(job, name, got, res)
 
@@ -326,5 +357,5 @@ def work(self:Pob, worker:str='tick', at:float=None, limit:int=100, when:dict=No
     at, when, out = int(ifnone(at, time.time())), when or {}, L()
     while len(out) < limit:
         if (job := self.q.claim_one(worker)) is None: break
-        out.append(self._run(job, at, when.get(job.id)))
+        out.append(self._run(job, at, when.get(job.id), worker))
     return out
