@@ -1,0 +1,1525 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.19">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="schedules, the lists they read, and the notes they leave">
+
+<title>core – pobblebonk</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-bf27225e3a48a9273f3daa8f8e829971.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-f2788e636de456f6409e966386820849.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="core – pobblebonk">
+<meta property="og:description" content="schedules, the lists they read, and the notes they leave">
+<meta property="og:site_name" content="pobblebonk">
+<meta name="twitter:title" content="core – pobblebonk">
+<meta name="twitter:description" content="schedules, the lists they read, and the notes they leave">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">pobblebonk</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools tools-end">
+</div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./core.html">core</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">pobblebonk</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./core.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">core</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./heartbeat.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">heartbeat</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#pob" id="toc-pob" class="nav-link active" data-scroll-target="#pob">Pob</a></li>
+  <li><a href="#the-notes-a-person-reads" id="toc-the-notes-a-person-reads" class="nav-link" data-scroll-target="#the-notes-a-person-reads">The notes a person reads</a></li>
+  <li><a href="#schedules" id="toc-schedules" class="nav-link" data-scroll-target="#schedules">Schedules</a></li>
+  <li><a href="#the-lists-a-fire-reads" id="toc-the-lists-a-fire-reads" class="nav-link" data-scroll-target="#the-lists-a-fire-reads">The lists a fire reads</a></li>
+  <li><a href="#the-tick" id="toc-the-tick" class="nav-link" data-scroll-target="#the-tick">The tick</a></li>
+  <li><a href="#long-jobs" id="toc-long-jobs" class="nav-link" data-scroll-target="#long-jobs">Long jobs</a></li>
+  <li><a href="#a-callback-at-a-cadence" id="toc-a-callback-at-a-cadence" class="nav-link" data-scroll-target="#a-callback-at-a-cadence">A callback, at a cadence</a></li>
+  <li><a href="#a-list-a-fire-reads" id="toc-a-list-a-fire-reads" class="nav-link" data-scroll-target="#a-list-a-fire-reads">A list a fire reads</a></li>
+  <li><a href="#pausing-dropping-and-what-is-refused" id="toc-pausing-dropping-and-what-is-refused" class="nav-link" data-scroll-target="#pausing-dropping-and-what-is-refused">Pausing, dropping, and what is refused</a></li>
+  <li><a href="#sharing-the-file" id="toc-sharing-the-file" class="nav-link" data-scroll-target="#sharing-the-file">Sharing the file</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/vedicreader/pobblebonk/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="core.html.md"><i class="bi bi-file-code"></i>Markdown</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">core</h1>
+</div>
+
+<div>
+  <div class="description">
+    schedules, the lists they read, and the notes they leave
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<p>All of pobblebonk is here, because <a href="https://github.com/russellromney/honker">honker</a> already has most of it. honker brings the queue, the durable scheduler table, the streams with a cursor per reader, the retries and the named locks, all in one SQLite file and all as SQL functions.</p>
+<p>What is left is what honker has not got, and it is three things. A pile you add to over a week that a fire later reads. A gate that stops a fire running when its pile is empty. And a callback, because honker fires a job and something has to decide what a job means.</p>
+<p>There is no daemon. <code>honker_scheduler_tick(now)</code> is a SQL function, so <code>tick</code> is one call and a cron entry is the whole scheduler.</p>
+<div id="10a50ccc" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-11T22:40:20.339907+00:00&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-11T22:40:20.426993+00:00&quot;,&quot;total&quot;:0.08709139900000196}}" data-execution_count="5">
+<hr>
+<p><a href="https://github.com/vedicreader/pobblebonk/blob/main/pobblebonk/core.py#L28" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="secs" class="level3">
+<h3 class="anchored" data-anchor-id="secs">secs</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> secs(</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    every</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span><span class="bu">int</span>:</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Whole seconds from <code>'30m'</code>, <code>'6h'</code>, <code>'1w'</code>, <code>'1h30m'</code>, or a number.</em></p>
+</section>
+</div>
+<div id="cd9da9d3" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>test_eq(secs(<span class="st">'30m'</span>), <span class="dv">1800</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>test_eq(secs(<span class="st">'1h30m'</span>), <span class="dv">5400</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>test_eq(secs(<span class="st">'2 days'</span>), <span class="dv">172800</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>test_eq(secs(<span class="st">'2 years'</span>), _MULT[<span class="st">'y'</span>]<span class="op">*</span><span class="dv">2</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>test_eq(secs(<span class="dv">90</span>), <span class="dv">90</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>test_fail(<span class="kw">lambda</span>: secs(<span class="st">'soon'</span>), contains<span class="op">=</span><span class="st">'not a duration'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="95432d31" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-11T22:40:20.429901+00:00&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-11T22:40:20.434313+00:00&quot;,&quot;total&quot;:0.004415212000004942}}" data-execution_count="8">
+<hr>
+<p><a href="https://github.com/vedicreader/pobblebonk/blob/main/pobblebonk/core.py#L42" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="backoff" class="level3">
+<h3 class="anchored" data-anchor-id="backoff">backoff</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> backoff(</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    attempt:<span class="bu">int</span>, <span class="co"># failures so far; 1 on the first</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    base:<span class="bu">float</span><span class="op">=</span><span class="dv">30</span>, <span class="co"># the first delay, in seconds</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    cap:<span class="bu">float</span><span class="op">=</span><span class="dv">3600</span>, <span class="co"># longest a retry ever waits</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span><span class="bu">float</span>:</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Doubling delay: 30s, 60s, 120s, 240s, capped. A bot wall clears on its own or it does not.</em></p>
+</section>
+</div>
+<div id="a5bd0b7f" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>test_eq([backoff(a) <span class="cf">for</span> a <span class="kw">in</span> (<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>)], [<span class="dv">30</span>, <span class="dv">60</span>, <span class="dv">120</span>, <span class="dv">240</span>])</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>test_eq(backoff(<span class="dv">1</span>, base<span class="op">=</span><span class="dv">10</span>), <span class="dv">10</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>test_eq(backoff(<span class="dv">99</span>), <span class="dv">3600</span>)                    <span class="co"># capped: a wall that has not cleared in an hour will not</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>test_eq(backoff(<span class="dv">0</span>), <span class="dv">30</span>)                       <span class="co"># an attempt count of 0 is still the first delay</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="35b15b61" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-11T22:40:20.436179+00:00&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-11T22:40:20.440359+00:00&quot;,&quot;total&quot;:0.004183660999999006}}" data-execution_count="10">
+<hr>
+<p><a href="https://github.com/vedicreader/pobblebonk/blob/main/pobblebonk/core.py#L51" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="clip" class="level3">
+<h3 class="anchored" data-anchor-id="clip">clip</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> clip(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    s, mx:<span class="bu">int</span><span class="op">=</span><span class="dv">20000</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span><span class="bu">str</span>:</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Text short enough to store, saying what it dropped rather than losing it quietly.</em></p>
+</section>
+</div>
+<div id="3c3461e6" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>test_eq(clip(<span class="st">'abcdef'</span>, <span class="dv">3</span>), <span class="st">'abc</span><span class="ch">\n</span><span class="st">... [3 more chars]'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<section id="pob" class="level2">
+<h2 class="anchored" data-anchor-id="pob">Pob</h2>
+<div id="545189d6" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-11T22:40:20.443430+00:00&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-11T22:40:20.449144+00:00&quot;,&quot;total&quot;:0.005717587999995999}}" data-execution_count="12">
+<hr>
+<p><a href="https://github.com/vedicreader/pobblebonk/blob/main/pobblebonk/core.py#L57" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="pob-1" class="level3">
+<h3 class="anchored" data-anchor-id="pob-1">Pob</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> Pob(</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    path:NoneType<span class="op">=</span><span class="va">None</span>, <span class="co"># the file; None makes a temporary one</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    db:NoneType<span class="op">=</span><span class="va">None</span>, <span class="co"># or a honker database something else already opened</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    retries:<span class="bu">int</span><span class="op">=</span><span class="dv">5</span>, <span class="co"># attempts a failing fire gets before it is dead-lettered</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    base:<span class="bu">float</span><span class="op">=</span><span class="dv">30</span>, <span class="co"># seconds before the first retry; doubles per attempt</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    lease:<span class="bu">int</span><span class="op">=</span><span class="dv">300</span>, <span class="co"># seconds a claim lasts; a running callback renews it</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>):</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>A honker database, the one table honker has not got, and the callbacks a fire runs.</em></p>
+</section>
+</div>
+<div id="2a8a384b" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> Pob()</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>test_eq(p.retries, RETRIES)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>test_eq(p.base, <span class="bu">float</span>(BASE))</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>test_eq((p.lease, p.q.visibility_timeout_s), (<span class="dv">300</span>, <span class="dv">300</span>))</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>test_eq(Pob(lease<span class="op">=</span><span class="dv">2</span>).q.visibility_timeout_s, <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="the-notes-a-person-reads" class="level2">
+<h2 class="anchored" data-anchor-id="the-notes-a-person-reads">The notes a person reads</h2>
+<p>Nothing is sent anywhere. An agent cannot start a turn of its own, so a fire leaves a note and each place you work drains it on its next turn. honker’s stream keeps a cursor per reader, so a phone and a terminal each see everything once.</p>
+<div id="9ff2721b" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-11T22:40:20.452490+00:00&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-11T22:40:20.457021+00:00&quot;,&quot;total&quot;:0.004534243999998466}}" data-execution_count="14">
+<hr>
+<p><a href="https://github.com/vedicreader/pobblebonk/blob/main/pobblebonk/core.py#L93" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="pob.drain" class="level3">
+<h3 class="anchored" data-anchor-id="pob.drain">Pob.drain</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> drain(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    reader:<span class="bu">str</span>, limit:<span class="bu">int</span><span class="op">=</span><span class="dv">50</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>fastcore.foundation.L:</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Every note this reader has not had. What a turn calls before it answers you.</em></p>
+</section>
+</div>
+<div id="134fcf82" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-11T22:40:20.457153+00:00&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-11T22:40:20.461257+00:00&quot;,&quot;total&quot;:0.004107288999996683}}" data-execution_count="15">
+<hr>
+<p><a href="https://github.com/vedicreader/pobblebonk/blob/main/pobblebonk/core.py#L87" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="pob.notes" class="level3">
+<h3 class="anchored" data-anchor-id="pob.notes">Pob.notes</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> notes(</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    limit:<span class="bu">int</span><span class="op">=</span><span class="dv">50</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>fastcore.foundation.L:</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Every note, newest first, whatever any reader has seen.</em></p>
+</section>
+</div>
+<div id="8d3e0c08" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-11T22:40:20.461386+00:00&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-11T22:40:20.465562+00:00&quot;,&quot;total&quot;:0.004179644000004146}}" data-execution_count="16">
+<hr>
+<p><a href="https://github.com/vedicreader/pobblebonk/blob/main/pobblebonk/core.py#L81" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="pob.note" class="level3">
+<h3 class="anchored" data-anchor-id="pob.note">Pob.note</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> note(</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    title:<span class="bu">str</span>, body:<span class="bu">str</span><span class="op">=</span><span class="st">''</span>, <span class="op">**</span>meta</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>):</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Leave one note.</em></p>
+</section>
+</div>
+<div id="6447589a" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>p_notes <span class="op">=</span> Pob()</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>p_notes.note(<span class="st">'first'</span>, <span class="st">'one'</span>, kind<span class="op">=</span><span class="st">'answer'</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>p_notes.note(<span class="st">'second'</span>, <span class="st">'two'</span>)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'added notes: '</span>, p_notes.notes())</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co"># `notes` is an inspection view: newest first</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>test_eq(p_notes.notes().attrgot(<span class="st">'title'</span>), [<span class="st">'second'</span>, <span class="st">'first'</span>])</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>test_eq(p_notes.notes()[<span class="dv">1</span>].kind, <span class="st">'answer'</span>)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="co"># `drain` is a reader view: unread notes, oldest first</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'phone reader drain: '</span>, p_notes.drain(<span class="st">'phone'</span>))</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>test_eq(p_notes.drain(<span class="st">'phone'</span>), [])</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="co"># each reader has a separate cursor</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'terminal reader drain:'</span>, p_notes.drain(<span class="st">'terminal'</span>))</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>test_eq(p_notes.drain(<span class="st">'terminal'</span>), [])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>added notes:  [{'title': 'second', 'body': 'two', 'offset': 2}, {'title': 'first', 'body': 'one', 'kind': 'answer', 'offset': 1}]
+phone reader drain:  [{'title': 'first', 'body': 'one', 'kind': 'answer', 'offset': 1}, {'title': 'second', 'body': 'two', 'offset': 2}]
+terminal reader drain: [{'title': 'first', 'body': 'one', 'kind': 'answer', 'offset': 1}, {'title': 'second', 'body': 'two', 'offset': 2}]</code></pre>
+</div>
+</div>
+<div id="45d37749" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-11T22:40:20.468363+00:00&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-11T22:40:20.472285+00:00&quot;,&quot;total&quot;:0.00392468899999443}}" data-execution_count="18">
+<hr>
+<p><a href="https://github.com/vedicreader/pobblebonk/blob/main/pobblebonk/core.py#L113" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="pob.__repr__" class="level3">
+<h3 class="anchored" data-anchor-id="pob.__repr__">Pob.__repr__</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">__repr__</span>():</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Return repr(self).</em></p>
+</section>
+</div>
+<div id="3e16ca2e" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-11T22:40:20.472412+00:00&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-11T22:40:20.476354+00:00&quot;,&quot;total&quot;:0.003944976999996186}}" data-execution_count="19">
+<hr>
+<p><a href="https://github.com/vedicreader/pobblebonk/blob/main/pobblebonk/core.py#L108" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="pob.all" class="level3">
+<h3 class="anchored" data-anchor-id="pob.all">Pob.all</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="bu">all</span>()<span class="op">-&gt;</span>fastcore.foundation.L:</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Every schedule, with its payload parsed.</em></p>
+</section>
+</div>
+<div id="9588d440" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-11T22:40:20.476446+00:00&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-11T22:40:20.480210+00:00&quot;,&quot;total&quot;:0.0037658629999981486}}" data-execution_count="20">
+<hr>
+<p><a href="https://github.com/vedicreader/pobblebonk/blob/main/pobblebonk/core.py#L103" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="pob.due" class="level3">
+<h3 class="anchored" data-anchor-id="pob.due">Pob.due</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> due()<span class="op">-&gt;</span><span class="bu">int</span>:</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Fires queued and not yet run.</em></p>
+</section>
+</div>
+<div id="459bc93e" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>test_eq(<span class="bu">repr</span>(p), <span class="st">'Pob(0 schedules, 0 due, 0 notes)'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="schedules" class="level2">
+<h2 class="anchored" data-anchor-id="schedules">Schedules</h2>
+<p>A schedule is a durable instruction identified by <code>name</code>. <code>add</code> creates it. <code>update</code> changes the fields supplied by the caller and preserves the other fields. Payload changes merge with the stored payload. The schedule name does not change.</p>
+<p><code>batch</code> caps how many items of <code>needs</code> one fire takes. <code>batch=1</code> runs one job per fire and leaves the rest open.</p>
+<div id="4b593da0" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-11T22:40:20.488730+00:00&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-11T22:40:20.494083+00:00&quot;,&quot;total&quot;:0.0053569869999989805}}" data-execution_count="22">
+<hr>
+<p><a href="https://github.com/vedicreader/pobblebonk/blob/main/pobblebonk/core.py#L185" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="pob.update" class="level3">
+<h3 class="anchored" data-anchor-id="pob.update">Pob.update</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> update(</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    name:<span class="bu">str</span>, <span class="co"># schedule to change</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    cron:<span class="bu">str</span><span class="op">=</span><span class="va">None</span>, <span class="co"># new cron expression</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    every:NoneType<span class="op">=</span><span class="va">None</span>, <span class="co"># or a new duration</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    priority:<span class="bu">int</span><span class="op">=</span><span class="va">None</span>, <span class="co"># new queue priority</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    retries:<span class="bu">int</span><span class="op">=</span><span class="va">None</span>, <span class="co"># new attempt budget</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">**</span>payload</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>fastcore.basics.AttrDict: <span class="co"># payload fields to add or replace, `batch` among them</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Change an existing schedule without replacing fields that are not given.</em></p>
+</section>
+</div>
+<div id="529ef71e" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-11T22:40:20.494217+00:00&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-11T22:40:20.498245+00:00&quot;,&quot;total&quot;:0.0040330810000028805}}" data-execution_count="23">
+<hr>
+<p><a href="https://github.com/vedicreader/pobblebonk/blob/main/pobblebonk/core.py#L180" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="pob.drop" class="level3">
+<h3 class="anchored" data-anchor-id="pob.drop">Pob.drop</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> drop(</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    name:<span class="bu">str</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span><span class="bu">bool</span>:</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+</div>
+<div id="fac4abf8" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-11T22:40:20.498406+00:00&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-11T22:40:20.501642+00:00&quot;,&quot;total&quot;:0.0032398560000004295}}" data-execution_count="24">
+<hr>
+<p><a href="https://github.com/vedicreader/pobblebonk/blob/main/pobblebonk/core.py#L177" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="pob.resume" class="level3">
+<h3 class="anchored" data-anchor-id="pob.resume">Pob.resume</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> resume(</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    name:<span class="bu">str</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span><span class="bu">bool</span>:</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+</div>
+<div id="79214a02" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-11T22:40:20.501775+00:00&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-11T22:40:20.504326+00:00&quot;,&quot;total&quot;:0.002553720000001647}}" data-execution_count="25">
+<hr>
+<p><a href="https://github.com/vedicreader/pobblebonk/blob/main/pobblebonk/core.py#L174" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="pob.pause" class="level3">
+<h3 class="anchored" data-anchor-id="pob.pause">Pob.pause</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> pause(</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    name:<span class="bu">str</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span><span class="bu">bool</span>:</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+</div>
+<div id="d2c8f192" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-11T22:40:20.504420+00:00&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-11T22:40:20.507851+00:00&quot;,&quot;total&quot;:0.0034354930000048967}}" data-execution_count="26">
+<hr>
+<p><a href="https://github.com/vedicreader/pobblebonk/blob/main/pobblebonk/core.py#L171" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="pob.get" class="level3">
+<h3 class="anchored" data-anchor-id="pob.get">Pob.get</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get(</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    name:<span class="bu">str</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>fastcore.basics.AttrDict:</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+</div>
+<div id="e2b4672d" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-11T22:40:20.507997+00:00&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-11T22:40:20.511054+00:00&quot;,&quot;total&quot;:0.0030583730000017795}}" data-execution_count="27">
+<hr>
+<p><a href="https://github.com/vedicreader/pobblebonk/blob/main/pobblebonk/core.py#L163" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="pob.on" class="level3">
+<h3 class="anchored" data-anchor-id="pob.on">Pob.on</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> on(</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    name:<span class="bu">str</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>):</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Decorator naming the callback a fire of <code>name</code> runs.</em></p>
+</section>
+</div>
+<div id="113d4289" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-11T22:40:20.511146+00:00&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-11T22:40:20.513865+00:00&quot;,&quot;total&quot;:0.0027231709999995246}}" data-execution_count="28">
+<hr>
+<p><a href="https://github.com/vedicreader/pobblebonk/blob/main/pobblebonk/core.py#L155" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="pob.fire_at" class="level3">
+<h3 class="anchored" data-anchor-id="pob.fire_at">Pob.fire_at</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fire_at(</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    name:<span class="bu">str</span>, at:<span class="bu">float</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>fastcore.basics.AttrDict:</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Move the next fire of <code>name</code>. The cadence picks every boundary after it.</em></p>
+</section>
+</div>
+<div id="c601376a" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-11T22:40:20.514000+00:00&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-11T22:40:20.519976+00:00&quot;,&quot;total&quot;:0.005979144999997743}}" data-execution_count="29">
+<hr>
+<p><a href="https://github.com/vedicreader/pobblebonk/blob/main/pobblebonk/core.py#L133" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="pob.add" class="level3">
+<h3 class="anchored" data-anchor-id="pob.add">Pob.add</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> add(</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    name:<span class="bu">str</span>, <span class="co"># what you call it; unique, and what a note is titled with</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    cron:<span class="bu">str</span><span class="op">=</span><span class="va">None</span>, <span class="co"># a five-field cron expression</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    every:NoneType<span class="op">=</span><span class="va">None</span>, <span class="co"># or a duration: `'30m'`, `'1w'`, or seconds</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    needs:<span class="bu">str</span><span class="op">=</span><span class="va">None</span>, <span class="co"># a list topic this cannot run without</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>    catchup:<span class="bu">str</span><span class="op">=</span><span class="st">'once'</span>, <span class="co"># `once` runs the latest missed fire, `all` every one, an int that many</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>    start:<span class="bu">float</span><span class="op">=</span><span class="va">None</span>, <span class="co"># epoch seconds for the first fire; None lets the cadence pick it</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>    retries:<span class="bu">int</span><span class="op">=</span><span class="va">None</span>, <span class="co"># attempts a failing fire gets; None -&gt; the Pob's own</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>    batch:<span class="bu">int</span><span class="op">=</span><span class="va">None</span>, <span class="co"># items of `needs` one fire takes, oldest first; None takes them all</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">**</span>payload</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>fastcore.basics.AttrDict: <span class="co"># anything the callback wants</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Write down a standing instruction.</em></p>
+</section>
+</div>
+<div id="467356a6" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-11T22:40:20.520112+00:00&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-11T22:40:20.524470+00:00&quot;,&quot;total&quot;:0.0043589479999965874}}" data-execution_count="30">
+<hr>
+<p><a href="https://github.com/vedicreader/pobblebonk/blob/main/pobblebonk/core.py#L119" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="catchup_n" class="level3">
+<h3 class="anchored" data-anchor-id="catchup_n">catchup_n</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> catchup_n(</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>    v</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span><span class="bu">int</span>:</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Fires kept of the ones missed while the machine was off. 0 means keep every one.</em></p>
+</section>
+</div>
+<div id="67b225ab" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>p_sched <span class="op">=</span> Pob()</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>added <span class="op">=</span> p_sched.add(<span class="st">'digest'</span>, every<span class="op">=</span><span class="st">'1h'</span>, needs<span class="op">=</span><span class="st">'inbox'</span>, catchup<span class="op">=</span><span class="st">'once'</span>, retries<span class="op">=</span><span class="dv">4</span>, tone<span class="op">=</span><span class="st">'brief'</span>)</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>test_eq(p_sched.get(<span class="st">'digest'</span>).name, <span class="st">'digest'</span>)</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>test_eq(<span class="bu">len</span>(p_sched.<span class="bu">all</span>()), <span class="dv">1</span>)</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>test_eq(added.payload, {<span class="st">'schedule'</span>: <span class="st">'digest'</span>,<span class="st">'needs'</span>: <span class="st">'inbox'</span>,<span class="st">'catchup'</span>: <span class="st">'once'</span>,<span class="st">'batch'</span>: <span class="va">None</span>,<span class="st">'tone'</span>: <span class="st">'brief'</span>})</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>changed <span class="op">=</span> p_sched.update(<span class="st">'digest'</span>,every<span class="op">=</span><span class="st">'2h'</span>,priority<span class="op">=</span><span class="dv">9</span>,retries<span class="op">=</span><span class="dv">7</span>,catchup<span class="op">=</span><span class="st">'all'</span>,tone<span class="op">=</span><span class="st">'detailed'</span>)</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>test_eq(changed.cron_expr, every_s(secs(<span class="st">'2h'</span>)).expr)</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>test_eq(changed.priority, <span class="dv">9</span>)</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>test_eq(changed.max_attempts, <span class="dv">7</span>)</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>test_eq(changed.payload, {<span class="st">'schedule'</span>: <span class="st">'digest'</span>,<span class="st">'needs'</span>: <span class="st">'inbox'</span>,<span class="st">'catchup'</span>: <span class="st">'all'</span>,<span class="st">'batch'</span>: <span class="va">None</span>,<span class="st">'tone'</span>: <span class="st">'detailed'</span>})</span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>test_eq(p_sched.update(<span class="st">'digest'</span>, batch<span class="op">=</span><span class="dv">1</span>).payload[<span class="st">'batch'</span>], <span class="dv">1</span>)</span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>test_eq(p_sched.update(<span class="st">'digest'</span>, batch<span class="op">=</span><span class="va">None</span>).payload[<span class="st">'batch'</span>], <span class="va">None</span>)</span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>test_fail(<span class="kw">lambda</span>: p_sched.update(<span class="st">'digest'</span>, batch<span class="op">=</span><span class="dv">0</span>), contains<span class="op">=</span><span class="st">'batch must be'</span>)</span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>test_fail(<span class="kw">lambda</span>: p_sched.add(<span class="st">'bad'</span>, every<span class="op">=</span><span class="st">'1h'</span>, batch<span class="op">=</span><span class="st">'1'</span>), contains<span class="op">=</span><span class="st">'batch must be'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="the-lists-a-fire-reads" class="level2">
+<h2 class="anchored" data-anchor-id="the-lists-a-fire-reads">The lists a fire reads</h2>
+<p>Reading a list never empties it. Only the work that finished does that, so a cart run that failed loses no milk.</p>
+<div id="8b61ab51" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-11T22:40:20.527285+00:00&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-11T22:40:20.530081+00:00&quot;,&quot;total&quot;:0.0027982709999960775}}" data-execution_count="32">
+<hr>
+<p><a href="https://github.com/vedicreader/pobblebonk/blob/main/pobblebonk/core.py#L227" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="pob.items" class="level3">
+<h3 class="anchored" data-anchor-id="pob.items">Pob.items</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> items(</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>    topic:<span class="bu">str</span>, limit:<span class="bu">int</span><span class="op">=</span><span class="dv">200</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>fastcore.foundation.L:</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>The open items on <code>topic</code>, oldest first, in push order on a tie.</em></p>
+</section>
+</div>
+<div id="de7c9ccf" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-11T22:40:20.530175+00:00&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-11T22:40:20.534833+00:00&quot;,&quot;total&quot;:0.004660469999997474}}" data-execution_count="33">
+<hr>
+<p><a href="https://github.com/vedicreader/pobblebonk/blob/main/pobblebonk/core.py#L210" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="pob.push" class="level3">
+<h3 class="anchored" data-anchor-id="pob.push">Pob.push</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> push(</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>    topic:<span class="bu">str</span>, <span class="co"># which list</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    text:<span class="bu">str</span>, <span class="co"># the line the callback reads</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>    key:<span class="bu">str</span><span class="op">=</span><span class="va">None</span>, <span class="co"># send the same thing twice and it stays one item</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>    at:<span class="bu">float</span><span class="op">=</span><span class="va">None</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>fastcore.basics.AttrDict:</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Add one item, or give back the open one that <code>key</code> already names.</em></p>
+</section>
+</div>
+<div id="65b3184b" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>p_items <span class="op">=</span> Pob()</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>milk <span class="op">=</span> p_items.push(<span class="st">'shopping'</span>, <span class="st">'milk'</span>, at<span class="op">=</span><span class="dv">20</span>)</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>bread <span class="op">=</span> p_items.push(<span class="st">'shopping'</span>, <span class="st">'bread'</span>, key<span class="op">=</span><span class="st">'photo-1'</span>, at<span class="op">=</span><span class="dv">10</span>)</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>same_bread <span class="op">=</span> p_items.push(<span class="st">'shopping'</span>, <span class="st">'bread again'</span>, key<span class="op">=</span><span class="st">'photo-1'</span>, at<span class="op">=</span><span class="dv">30</span>)</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>p_items.push(<span class="st">'reading'</span>, <span class="st">'Dune'</span>, at<span class="op">=</span><span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>{ <span class="st">'at'</span>: <span class="fl">5.0</span>,</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">'id'</span>: <span class="dv">3</span>,</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">'key'</span>: <span class="va">None</span>,</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">'text'</span>: <span class="st">'Dune'</span>,</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">'topic'</span>: <span class="st">'reading'</span>,</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">'used_at'</span>: <span class="va">None</span>,</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">'used_by'</span>: <span class="va">None</span>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<div id="330813d9" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># `key` makes repeated open items idempotent</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>test_eq(same_bread.<span class="bu">id</span>, bread.<span class="bu">id</span>)</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>test_eq(same_bread.text, <span class="st">'bread'</span>)</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="co"># items are separate by topic and ordered oldest first</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>test_eq(p_items.items(<span class="st">'shopping'</span>).attrgot(<span class="st">'text'</span>), [<span class="st">'bread'</span>, <span class="st">'milk'</span>])</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>test_eq(p_items.items(<span class="st">'reading'</span>).attrgot(<span class="st">'text'</span>),[<span class="st">'Dune'</span>])</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a><span class="co"># limit applies after ordering</span></span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>test_eq(p_items.items(<span class="st">'shopping'</span>, limit<span class="op">=</span><span class="dv">1</span>).attrgot(<span class="st">'text'</span>),[<span class="st">'bread'</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><code>used</code> records that an item was consumed successfully. A used item no longer appears in <code>items</code>. <code>used_by</code> is free-form provenance supplied by the caller. Pobblebonk stores it for inspection. It does not validate the value or use it for access control. <code>drop_item</code> deletes an open item; a used one stays.</p>
+<div id="71d20fd6" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-11T22:40:20.537048+00:00&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-11T22:40:20.539721+00:00&quot;,&quot;total&quot;:0.002674861000002693}}" data-execution_count="35">
+<hr>
+<p><a href="https://github.com/vedicreader/pobblebonk/blob/main/pobblebonk/core.py#L244" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="pob.drop_item" class="level3">
+<h3 class="anchored" data-anchor-id="pob.drop_item">Pob.drop_item</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> drop_item(</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">id</span>:<span class="bu">int</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span><span class="bu">bool</span>:</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Delete an open item, a job cancelled before it starts.</em></p>
+</section>
+</div>
+<div id="9e1b1d7a" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-11T22:40:20.539814+00:00&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-11T22:40:20.544200+00:00&quot;,&quot;total&quot;:0.004388353000003065}}" data-execution_count="36">
+<hr>
+<p><a href="https://github.com/vedicreader/pobblebonk/blob/main/pobblebonk/core.py#L234" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="pob.used" class="level3">
+<h3 class="anchored" data-anchor-id="pob.used">Pob.used</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> used(</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>    ids, by:<span class="bu">str</span><span class="op">=</span><span class="st">''</span>, at:<span class="bu">float</span><span class="op">=</span><span class="va">None</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span><span class="bu">int</span>:</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Mark items done, once the work that consumed them succeeded.</em></p>
+</section>
+</div>
+<div id="c801b319" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># no IDs means no change</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>test_eq(p_items.used([]), <span class="dv">0</span>)</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="co"># mark only bread as used</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>test_eq(p_items.used([bread.<span class="bu">id</span>], by<span class="op">=</span><span class="st">'cart'</span>, at<span class="op">=</span><span class="dv">100</span>), <span class="dv">1</span>)</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>test_eq(p_items.items(<span class="st">'shopping'</span>).attrgot(<span class="st">'text'</span>), [<span class="st">'milk'</span>])</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>used_bread <span class="op">=</span> AttrDict(p_items.db.query(<span class="st">'SELECT used_at, used_by FROM pob_items WHERE id=?'</span>,[bread.<span class="bu">id</span>])[<span class="dv">0</span>])</span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>test_eq((used_bread.used_at, used_bread.used_by), (<span class="fl">100.0</span>, <span class="st">'cart'</span>))</span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a><span class="co"># marking the same item twice changes nothing</span></span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>test_eq(p_items.used([bread.<span class="bu">id</span>], by<span class="op">=</span><span class="st">'other'</span>, at<span class="op">=</span><span class="dv">200</span>), <span class="dv">0</span>)</span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a><span class="co"># its old key is now free for a new open item</span></span>
+<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a>new_bread <span class="op">=</span> p_items.push(<span class="st">'shopping'</span>, <span class="st">'fresh bread'</span>, key<span class="op">=</span><span class="st">'photo-1'</span>, at<span class="op">=</span><span class="dv">30</span>)</span>
+<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a>test_ne(new_bread.<span class="bu">id</span>, bread.<span class="bu">id</span>)</span>
+<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a>test_eq(p_items.items(<span class="st">'shopping'</span>).attrgot(<span class="st">'text'</span>),[<span class="st">'milk'</span>, <span class="st">'fresh bread'</span>])</span>
+<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a><span class="co"># `drop_item` deletes an open item and leaves a used one alone</span></span>
+<span id="cb35-19"><a href="#cb35-19" aria-hidden="true" tabindex="-1"></a>test_eq(p_items.drop_item(new_bread.<span class="bu">id</span>), <span class="va">True</span>)</span>
+<span id="cb35-20"><a href="#cb35-20" aria-hidden="true" tabindex="-1"></a>test_eq(p_items.drop_item(new_bread.<span class="bu">id</span>), <span class="va">False</span>)</span>
+<span id="cb35-21"><a href="#cb35-21" aria-hidden="true" tabindex="-1"></a>test_eq(p_items.drop_item(bread.<span class="bu">id</span>), <span class="va">False</span>)</span>
+<span id="cb35-22"><a href="#cb35-22" aria-hidden="true" tabindex="-1"></a>test_eq(p_items.items(<span class="st">'shopping'</span>).attrgot(<span class="st">'text'</span>),[<span class="st">'milk'</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="the-tick" class="level2">
+<h2 class="anchored" data-anchor-id="the-tick">The tick</h2>
+<p>One SQL call fires what is due and advances every <code>next_fire_at</code>. honker enqueues a job for every missed boundary, so <code>once</code> keeps the latest of them and cancels the rest.</p>
+<div id="07f7eb6c" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-11T22:40:20.546593+00:00&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-11T22:40:20.549644+00:00&quot;,&quot;total&quot;:0.003053897000000916}}" data-execution_count="38">
+<hr>
+<p><a href="https://github.com/vedicreader/pobblebonk/blob/main/pobblebonk/core.py#L250" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="superseded" class="level3">
+<h3 class="anchored" data-anchor-id="superseded">superseded</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> superseded(</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>    fires, keep</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span><span class="bu">set</span>:</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Older job IDs for schedules that make up only their most recent missed fires.</em></p>
+</section>
+</div>
+<div id="1e484933" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>fires <span class="op">=</span> L([</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>    {<span class="st">'name'</span>: <span class="st">'digest'</span>, <span class="st">'job_id'</span>: <span class="dv">1</span>, <span class="st">'fire_at'</span>: <span class="dv">10</span>},</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>    {<span class="st">'name'</span>: <span class="st">'digest'</span>, <span class="st">'job_id'</span>: <span class="dv">2</span>, <span class="st">'fire_at'</span>: <span class="dv">20</span>},</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>    {<span class="st">'name'</span>: <span class="st">'digest'</span>, <span class="st">'job_id'</span>: <span class="dv">3</span>, <span class="st">'fire_at'</span>: <span class="dv">30</span>},</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>    {<span class="st">'name'</span>: <span class="st">'archive'</span>, <span class="st">'job_id'</span>: <span class="dv">4</span>, <span class="st">'fire_at'</span>: <span class="dv">10</span>},</span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>    {<span class="st">'name'</span>: <span class="st">'archive'</span>, <span class="st">'job_id'</span>: <span class="dv">5</span>, <span class="st">'fire_at'</span>: <span class="dv">20</span>},</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>])</span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a><span class="co"># `digest` runs once, so only its newest fire remains</span></span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>test_eq(superseded(fires, {<span class="st">'digest'</span>}), {<span class="dv">1</span>, <span class="dv">2</span>})</span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a><span class="co"># `archive` uses catchup='all', so none of its fires are superseded</span></span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a>test_eq(superseded(fires, <span class="bu">set</span>()), <span class="bu">set</span>())</span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a><span class="co"># one fire has nothing older to replace</span></span>
+<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a>test_eq(superseded([{<span class="st">'name'</span>: <span class="st">'digest'</span>, <span class="st">'job_id'</span>: <span class="dv">1</span>, <span class="st">'fire_at'</span>: <span class="dv">10</span>}], {<span class="st">'digest'</span>}), <span class="bu">set</span>())</span>
+<span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a><span class="co"># a count keeps that many of the missed fires, newest last</span></span>
+<span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a>test_eq(superseded(fires, {<span class="st">'digest'</span>: <span class="dv">2</span>}), {<span class="dv">1</span>})</span>
+<span id="cb37-17"><a href="#cb37-17" aria-hidden="true" tabindex="-1"></a>test_eq(superseded(fires, {<span class="st">'digest'</span>: <span class="dv">3</span>}), <span class="bu">set</span>())</span>
+<span id="cb37-18"><a href="#cb37-18" aria-hidden="true" tabindex="-1"></a>test_eq(superseded(fires, {<span class="st">'digest'</span>: <span class="dv">1</span>, <span class="st">'archive'</span>: <span class="dv">1</span>}), {<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">4</span>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="c24afd6c" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-11T22:40:20.552780+00:00&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-11T22:40:20.556842+00:00&quot;,&quot;total&quot;:0.0040656520000013074}}" data-execution_count="40">
+<hr>
+<p><a href="https://github.com/vedicreader/pobblebonk/blob/main/pobblebonk/core.py#L263" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="pob.tick" class="level3">
+<h3 class="anchored" data-anchor-id="pob.tick">Pob.tick</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> tick(</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>    at:<span class="bu">float</span><span class="op">=</span><span class="va">None</span>, <span class="co"># when this tick is happening; now when unset</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>    worker:<span class="bu">str</span><span class="op">=</span><span class="st">'tick'</span>, <span class="co"># the lease holder recorded on each job</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>    run:<span class="bu">bool</span><span class="op">=</span><span class="va">True</span>, <span class="co"># False queues the fires and runs none of them</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>fastcore.basics.AttrDict:</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Create due fires, apply catch-up policy, then run the remaining jobs.</em></p>
+</section>
+</div>
+<div id="1f4e5027" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># A tick before the first boundary creates no jobs.</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>p_early <span class="op">=</span> Pob()</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>p_early.add(<span class="st">'early'</span>, every<span class="op">=</span><span class="st">'1s'</span>)</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>first_fire <span class="op">=</span> p_early.get(<span class="st">'early'</span>).next_fire_at</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>first_fire</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<pre><code>1787713032</code></pre>
+</div>
+</div>
+<div id="f1af120c" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>early <span class="op">=</span> p_early.tick(at<span class="op">=</span>first_fire <span class="op">-</span> <span class="dv">1</span>, run<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>test_eq(early.fired, [])</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>test_eq(early.cancelled, <span class="dv">0</span>)</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>test_eq(early.ran, [])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="d27ec839" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co"># `once` keeps only the newest missed boundary.</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>p_once <span class="op">=</span> Pob()</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>p_once.add(<span class="st">'digest'</span>, every<span class="op">=</span><span class="st">'1s'</span>, catchup<span class="op">=</span><span class="st">'once'</span>)</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>first_fire <span class="op">=</span> p_once.get(<span class="st">'digest'</span>).next_fire_at</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>once <span class="op">=</span> p_once.tick(at<span class="op">=</span>first_fire <span class="op">+</span> <span class="dv">2</span>, run<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>once</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>{ <span class="st">'cancelled'</span>: <span class="dv">2</span>,</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">'fired'</span>: [{<span class="st">'fire_at'</span>: <span class="dv">1787713034</span>, <span class="st">'job_id'</span>: <span class="dv">3</span>, <span class="st">'name'</span>: <span class="st">'digest'</span>, <span class="st">'queue'</span>: <span class="st">'pob.fires'</span>}],</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">'ran'</span>: []}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<div id="1c25fc66" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>test_eq(<span class="bu">len</span>(once.fired), <span class="dv">1</span>)</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>test_eq(once.cancelled, <span class="dv">2</span>)</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>test_eq(once.fired[<span class="dv">0</span>].fire_at, first_fire <span class="op">+</span> <span class="dv">2</span>)</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>test_eq(once.ran, [])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="67a71977" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># `all` keeps every missed boundary.</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>p_all <span class="op">=</span> Pob()</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>p_all.add(<span class="st">'archive'</span>, every<span class="op">=</span><span class="st">'1s'</span>, catchup<span class="op">=</span><span class="st">'all'</span>)</span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>first_fire <span class="op">=</span> p_all.get(<span class="st">'archive'</span>).next_fire_at</span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>first_fire</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<pre><code>1787713032</code></pre>
+</div>
+</div>
+<div id="805c9ba3" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>all_fires <span class="op">=</span> p_all.tick(at<span class="op">=</span>first_fire <span class="op">+</span> <span class="dv">2</span>, run<span class="op">=</span><span class="va">False</span>)<span class="op">;</span> all_fires</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb48"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>{ <span class="st">'cancelled'</span>: <span class="dv">0</span>,</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">'fired'</span>: [{<span class="st">'fire_at'</span>: <span class="dv">1787713032</span>, <span class="st">'job_id'</span>: <span class="dv">1</span>, <span class="st">'name'</span>: <span class="st">'archive'</span>, <span class="st">'queue'</span>: <span class="st">'pob.fires'</span>}, {<span class="st">'fire_at'</span>: <span class="dv">1787713033</span>, <span class="st">'job_id'</span>: <span class="dv">2</span>, <span class="st">'name'</span>: <span class="st">'archive'</span>, <span class="st">'queue'</span>: <span class="st">'pob.fires'</span>}, {<span class="st">'fire_at'</span>: <span class="dv">1787713034</span>, <span class="st">'job_id'</span>: <span class="dv">3</span>, <span class="st">'name'</span>: <span class="st">'archive'</span>, <span class="st">'queue'</span>: <span class="st">'pob.fires'</span>}],</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">'ran'</span>: []}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<div id="0271ca9e" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>test_eq(<span class="bu">len</span>(all_fires.fired), <span class="dv">3</span>)</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>test_eq(all_fires.cancelled, <span class="dv">0</span>)</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>test_eq(all_fires.fired.attrgot(<span class="st">'fire_at'</span>),[first_fire, first_fire <span class="op">+</span> <span class="dv">1</span>, first_fire <span class="op">+</span> <span class="dv">2</span>])</span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>test_eq(all_fires.ran, [])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>A count between the two: make up that many missed boundaries and drop the rest.</p>
+<div id="1870e6f6" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>p_two <span class="op">=</span> Pob()</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>p_two.add(<span class="st">'digest'</span>, every<span class="op">=</span><span class="st">'1s'</span>, catchup<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>_f <span class="op">=</span> p_two.get(<span class="st">'digest'</span>).next_fire_at</span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>two <span class="op">=</span> p_two.tick(at<span class="op">=</span>_f <span class="op">+</span> <span class="dv">2</span>, run<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>test_eq(<span class="bu">len</span>(two.fired), <span class="dv">2</span>)</span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>test_eq(two.cancelled, <span class="dv">1</span>)</span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a>test_eq(two.missed, {<span class="st">'digest'</span>: <span class="dv">1</span>})   <span class="co"># which schedule lost a boundary, not just how many</span></span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a>test_eq(two.fired.attrgot(<span class="st">'fire_at'</span>), [_f <span class="op">+</span> <span class="dv">1</span>, _f <span class="op">+</span> <span class="dv">2</span>])   <span class="co"># the most recent two</span></span>
+<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a>test_fail(<span class="kw">lambda</span>: p_two.add(<span class="st">'bad'</span>, every<span class="op">=</span><span class="st">'1s'</span>, catchup<span class="op">=</span><span class="dv">0</span>), contains<span class="op">=</span><span class="st">'positive int'</span>)</span>
+<span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a>test_fail(<span class="kw">lambda</span>: p_two.add(<span class="st">'bad'</span>, every<span class="op">=</span><span class="st">'1s'</span>, catchup<span class="op">=</span><span class="st">'some'</span>), contains<span class="op">=</span><span class="st">'positive int'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><code>start</code> sets the first fire. Without it the cadence picks the next boundary from now.</p>
+<div id="b43e0941" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>p_start <span class="op">=</span> Pob()</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>_at <span class="op">=</span> <span class="bu">int</span>(time.time()) <span class="op">+</span> <span class="dv">3600</span></span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>test_eq(p_start.add(<span class="st">'later'</span>, every<span class="op">=</span><span class="st">'1h'</span>, start<span class="op">=</span>_at).next_fire_at, _at)</span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>test_eq(p_start.tick(at<span class="op">=</span>_at <span class="op">-</span> <span class="dv">1</span>, run<span class="op">=</span><span class="va">False</span>).fired, [])          <span class="co"># nothing is due yet</span></span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>test_eq(<span class="bu">len</span>(p_start.tick(at<span class="op">=</span>_at, run<span class="op">=</span><span class="va">False</span>).fired), <span class="dv">1</span>)          <span class="co"># and then it is</span></span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>test_eq(p_start.fire_at(<span class="st">'later'</span>, _at <span class="op">+</span> <span class="dv">60</span>).next_fire_at, _at <span class="op">+</span> <span class="dv">60</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>A claimed Honker <code>Job</code> does not expose the stored values for <code>max_attempts</code>, <code>created_at</code>, or <code>run_at</code>. <code>_row</code> reads the live queue row when callback or retry logic needs those values.</p>
+<div id="7ddd0c98" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>p_row <span class="op">=</span> Pob(retries<span class="op">=</span><span class="dv">7</span>)</span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>p_row.q.enqueue({<span class="st">'schedule'</span>: <span class="st">'x'</span>}, max_attempts<span class="op">=</span><span class="dv">7</span>, run_at<span class="op">=</span><span class="dv">1_700_000_000</span>)</span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>job <span class="op">=</span> p_row.q.claim_one(<span class="st">'w'</span>)</span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>test_eq((job.max_attempts, job.created_at, job.run_at), (<span class="dv">3</span>, <span class="dv">0</span>, <span class="dv">0</span>))</span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>row <span class="op">=</span> p_row._row(job)</span>
+<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>test_eq(row.max_attempts, <span class="dv">7</span>)</span>
+<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a>test_eq(row.run_at, <span class="dv">1_700_000_000</span>)</span>
+<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a>test_eq(row.created_at <span class="op">&gt;</span> <span class="dv">0</span>, <span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>A callback failure spends one attempt. While the stored budget has attempts left, <code>_failed</code> returns the job to the queue after a doubling delay. The final failure dead-letters the job and leaves a note, because it will never produce an ordinary answer.</p>
+<div id="049b3ecb" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>p_retry <span class="op">=</span> Pob(base<span class="op">=</span><span class="dv">10</span>)</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>p_retry.q.enqueue({<span class="st">'schedule'</span>: <span class="st">'flaky'</span>}, max_attempts<span class="op">=</span><span class="dv">5</span>)</span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>job <span class="op">=</span> p_retry.q.claim_one(<span class="st">'worker'</span>)</span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>row <span class="op">=</span> p_retry._row(job)</span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>retry <span class="op">=</span> p_retry._failed(job, row, <span class="st">'flaky'</span>, <span class="pp">RuntimeError</span>(<span class="st">'bot wall'</span>))<span class="op">;</span> retry</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb54"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>{ <span class="st">'after'</span>: <span class="fl">10.0</span>,</span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">'attempt'</span>: <span class="dv">1</span>,</span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">'attempts_left'</span>: <span class="dv">4</span>,</span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">'error'</span>: <span class="st">'RuntimeError: bot wall'</span>,</span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">'name'</span>: <span class="st">'flaky'</span>,</span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">'status'</span>: <span class="st">'retry'</span>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<div id="c0b7727c" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>test_eq((retry.status, retry.error, retry.attempt, retry.attempts_left, retry.after), (<span class="st">'retry'</span>, <span class="st">'RuntimeError: bot wall'</span>, <span class="dv">1</span>, <span class="dv">4</span>, <span class="fl">10.0</span>))</span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>test_eq(p_retry.notes(), [])</span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>test_eq(p_retry.db.query(<span class="st">'SELECT count(*) n FROM _honker_dead'</span>)[<span class="dv">0</span>][<span class="st">'n'</span>], <span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="d9ba1db8" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>p_dead <span class="op">=</span> Pob(base<span class="op">=</span><span class="dv">10</span>)</span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>p_dead.q.enqueue({<span class="st">'schedule'</span>: <span class="st">'flaky'</span>}, max_attempts<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>job <span class="op">=</span> p_dead.q.claim_one(<span class="st">'worker'</span>)</span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>row <span class="op">=</span> p_dead._row(job)</span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>failed <span class="op">=</span> p_dead._failed(job, row, <span class="st">'flaky'</span>, <span class="pp">ValueError</span>(<span class="st">'bad answer'</span>))<span class="op">;</span> failed</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb57"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>{ <span class="st">'attempt'</span>: <span class="dv">1</span>,</span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">'error'</span>: <span class="st">'ValueError: bad answer'</span>,</span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">'name'</span>: <span class="st">'flaky'</span>,</span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">'status'</span>: <span class="st">'error'</span>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<div id="dc612d04" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>test_eq((failed.status, failed.error, failed.attempt), (<span class="st">'error'</span>, <span class="st">'ValueError: bad answer'</span>, <span class="dv">1</span>))</span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>test_eq(p_dead.db.query(<span class="st">'SELECT count(*) n FROM _honker_dead'</span>)[<span class="dv">0</span>][<span class="st">'n'</span>], <span class="dv">1</span>)</span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a>note <span class="op">=</span> p_dead.notes()[<span class="dv">0</span>]</span>
+<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a>test_eq((note.title, note.dead, note.ref), (<span class="st">'flaky'</span>, <span class="va">True</span>, job.<span class="bu">id</span>))</span>
+<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a>test_eq(note.body, <span class="st">'gave up after 1 tries. ValueError: bad answer'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>A successful callback has four effects: its result is stored, consumed list items are closed, a note is published, and the job is acknowledged. <code>_done</code> keeps those effects together.</p>
+<div id="eda6457f" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb59"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>p_done <span class="op">=</span> Pob()</span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>milk <span class="op">=</span> p_done.push(<span class="st">'shopping'</span>, <span class="st">'milk'</span>)</span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>job_id <span class="op">=</span> p_done.q.enqueue({<span class="st">'schedule'</span>: <span class="st">'cart'</span>})</span>
+<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a>job <span class="op">=</span> p_done.q.claim_one(<span class="st">'worker'</span>)</span>
+<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a>got <span class="op">=</span> p_done.items(<span class="st">'shopping'</span>)</span>
+<span id="cb59-6"><a href="#cb59-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-7"><a href="#cb59-7" aria-hidden="true" tabindex="-1"></a>done <span class="op">=</span> p_done._done(job, <span class="st">'cart'</span>, got, {<span class="st">'added'</span>: <span class="dv">1</span>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="207c3468" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>test_eq(done, {<span class="st">'name'</span>: <span class="st">'cart'</span>,<span class="st">'status'</span>: <span class="st">'ok'</span>,<span class="st">'result'</span>: {<span class="st">'added'</span>: <span class="dv">1</span>},<span class="st">'used'</span>: <span class="dv">1</span>})</span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>test_eq(p_done.items(<span class="st">'shopping'</span>), [])</span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>note <span class="op">=</span> p_done.notes()[<span class="dv">0</span>]</span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>test_eq((note.title, note.body, note.ref, note.used),(<span class="st">'cart'</span>, <span class="st">'{"added": 1}'</span>, job.<span class="bu">id</span>, <span class="dv">1</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Honker stores the schedule fields in a job payload, while the callback also needs the actual fire time, its open list items, and the job ID. <code>_fire</code> gathers those pieces into the object the callback receives. <code>batch</code> caps the list. <code>fire.worker</code> names the claim holder. <code>fire.beat()</code> renews the claim and <code>fire.note(body)</code> leaves a progress note with the job ID as its <code>ref</code>.</p>
+<div id="c1172e3d" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb61"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>p_fire <span class="op">=</span> Pob()</span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>item <span class="op">=</span> p_fire.push(<span class="st">'shopping'</span>, <span class="st">'milk'</span>)</span>
+<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a>job_id <span class="op">=</span> p_fire.q.enqueue({<span class="st">'schedule'</span>: <span class="st">'cart'</span>, <span class="st">'needs'</span>: <span class="st">'shopping'</span>}, run_at<span class="op">=</span><span class="dv">100</span>)</span>
+<span id="cb61-4"><a href="#cb61-4" aria-hidden="true" tabindex="-1"></a>job <span class="op">=</span> p_fire.q.claim_one(<span class="st">'worker'</span>)</span>
+<span id="cb61-5"><a href="#cb61-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-6"><a href="#cb61-6" aria-hidden="true" tabindex="-1"></a>fire, row <span class="op">=</span> p_fire._fire(job, at<span class="op">=</span><span class="dv">200</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="3341316d" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>test_eq((fire.schedule, fire.needs), (<span class="st">'cart'</span>, <span class="st">'shopping'</span>))</span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>test_eq(fire.<span class="bu">list</span>.attrgot(<span class="st">'id'</span>), [item.<span class="bu">id</span>])</span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>test_eq((fire.job, fire.fire_at), (job.<span class="bu">id</span>, <span class="dv">100</span>))</span>
+<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a>test_eq(row.<span class="bu">id</span>, job.<span class="bu">id</span>)</span>
+<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a>test_eq(fire.worker, <span class="st">'worker'</span>)</span>
+<span id="cb62-6"><a href="#cb62-6" aria-hidden="true" tabindex="-1"></a>test_eq(fire.beat(), <span class="va">True</span>)</span>
+<span id="cb62-7"><a href="#cb62-7" aria-hidden="true" tabindex="-1"></a>fire.note(<span class="st">'half done'</span>, step<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb62-8"><a href="#cb62-8" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> p_fire.notes()[<span class="dv">0</span>]</span>
+<span id="cb62-9"><a href="#cb62-9" aria-hidden="true" tabindex="-1"></a>test_eq((n.title, n.body, n.ref, n.step), (<span class="st">'cart'</span>, <span class="st">'half done'</span>, job.<span class="bu">id</span>, <span class="dv">1</span>))</span>
+<span id="cb62-10"><a href="#cb62-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-11"><a href="#cb62-11" aria-hidden="true" tabindex="-1"></a><span class="co"># An explicit scheduler boundary takes precedence over the stored run time.</span></span>
+<span id="cb62-12"><a href="#cb62-12" aria-hidden="true" tabindex="-1"></a>fire, _ <span class="op">=</span> p_fire._fire(job, at<span class="op">=</span><span class="dv">200</span>, fire_at<span class="op">=</span><span class="dv">50</span>)</span>
+<span id="cb62-13"><a href="#cb62-13" aria-hidden="true" tabindex="-1"></a>test_eq(fire.fire_at, <span class="dv">50</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>While a callback runs, <a href="https://vedicreader.github.io/pobblebonk/core.html#_beating"><code>_beating</code></a> renews its claim every third of the lease, so a long job keeps it. The thread stops when the callback returns or raises.</p>
+<div id="49239d56" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>p_missing <span class="op">=</span> Pob()</span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>p_missing.q.enqueue({<span class="st">'schedule'</span>: <span class="st">'nobody'</span>})</span>
+<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a>job <span class="op">=</span> p_missing.q.claim_one(<span class="st">'worker'</span>)</span>
+<span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb63-5"><a href="#cb63-5" aria-hidden="true" tabindex="-1"></a>missing <span class="op">=</span> p_missing._run(job, at<span class="op">=</span><span class="dv">100</span>)</span>
+<span id="cb63-6"><a href="#cb63-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb63-7"><a href="#cb63-7" aria-hidden="true" tabindex="-1"></a>test_eq(missing.status, <span class="st">'error'</span>)</span>
+<span id="cb63-8"><a href="#cb63-8" aria-hidden="true" tabindex="-1"></a>test_eq(missing.error, <span class="st">"no callback registered for 'nobody'"</span>)</span>
+<span id="cb63-9"><a href="#cb63-9" aria-hidden="true" tabindex="-1"></a>test_eq(p_missing.notes()[<span class="dv">0</span>].body, missing.error)</span>
+<span id="cb63-10"><a href="#cb63-10" aria-hidden="true" tabindex="-1"></a>test_eq(p_missing.notes()[<span class="dv">0</span>].dead, <span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="7e17dab2" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb64"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>p_empty <span class="op">=</span> Pob()</span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>called <span class="op">=</span> []</span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a>p_empty.on(<span class="st">'cart'</span>)(<span class="kw">lambda</span> fire: called.append(fire) <span class="kw">or</span> <span class="st">'done'</span>)</span>
+<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a>p_empty.q.enqueue({<span class="st">'schedule'</span>: <span class="st">'cart'</span>, <span class="st">'needs'</span>: <span class="st">'shopping'</span>})</span>
+<span id="cb64-5"><a href="#cb64-5" aria-hidden="true" tabindex="-1"></a>job <span class="op">=</span> p_empty.q.claim_one(<span class="st">'worker'</span>)</span>
+<span id="cb64-6"><a href="#cb64-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-7"><a href="#cb64-7" aria-hidden="true" tabindex="-1"></a>empty <span class="op">=</span> p_empty._run(job, at<span class="op">=</span><span class="dv">100</span>)</span>
+<span id="cb64-8"><a href="#cb64-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-9"><a href="#cb64-9" aria-hidden="true" tabindex="-1"></a>test_eq(empty.status, <span class="st">'skipped'</span>)</span>
+<span id="cb64-10"><a href="#cb64-10" aria-hidden="true" tabindex="-1"></a>test_eq(empty.why, <span class="st">'the shopping list is empty'</span>)</span>
+<span id="cb64-11"><a href="#cb64-11" aria-hidden="true" tabindex="-1"></a>test_eq(called, [])</span>
+<span id="cb64-12"><a href="#cb64-12" aria-hidden="true" tabindex="-1"></a>test_eq(p_empty.notes(), [])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="d6918338" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb65"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>p_raise <span class="op">=</span> Pob(base<span class="op">=</span><span class="dv">10</span>)</span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>p_raise.on(<span class="st">'cart'</span>)(<span class="kw">lambda</span> fire: <span class="dv">1</span><span class="op">/</span><span class="dv">0</span>)</span>
+<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a>p_raise.push(<span class="st">'shopping'</span>, <span class="st">'milk'</span>)</span>
+<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a>p_raise.q.enqueue({<span class="st">'schedule'</span>: <span class="st">'cart'</span>, <span class="st">'needs'</span>: <span class="st">'shopping'</span>}, max_attempts<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb65-5"><a href="#cb65-5" aria-hidden="true" tabindex="-1"></a>job <span class="op">=</span> p_raise.q.claim_one(<span class="st">'worker'</span>)</span>
+<span id="cb65-6"><a href="#cb65-6" aria-hidden="true" tabindex="-1"></a>raised <span class="op">=</span> p_raise._run(job, at<span class="op">=</span><span class="dv">100</span>)<span class="op">;</span> raised</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb66"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>{ <span class="st">'after'</span>: <span class="fl">10.0</span>,</span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">'attempt'</span>: <span class="dv">1</span>,</span>
+<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">'attempts_left'</span>: <span class="dv">2</span>,</span>
+<span id="cb66-4"><a href="#cb66-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">'error'</span>: <span class="st">'ZeroDivisionError: division by zero'</span>,</span>
+<span id="cb66-5"><a href="#cb66-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">'name'</span>: <span class="st">'cart'</span>,</span>
+<span id="cb66-6"><a href="#cb66-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">'status'</span>: <span class="st">'retry'</span>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<div id="175d17d9" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb67"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>test_eq((raised.status, raised.attempts_left, raised.after), (<span class="st">'retry'</span>, <span class="dv">2</span>, <span class="fl">10.0</span>))</span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a>test_eq(raised.error, <span class="st">'ZeroDivisionError: division by zero'</span>)</span>
+<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a>test_eq(p_raise.items(<span class="st">'shopping'</span>).attrgot(<span class="st">'text'</span>), [<span class="st">'milk'</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><code>work</code> drains ready fires from the queue. Each claim gives one worker exclusive ownership of a job; <a href="https://vedicreader.github.io/pobblebonk/heartbeat.html#_run"><code>_run</code></a> then dispatches it to the callback named in its payload. <code>limit</code> bounds one drain, and <code>when</code> preserves the scheduler boundary supplied by <code>tick</code>.</p>
+<div id="b5417363" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-11T22:40:20.574959+00:00&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-11T22:40:20.578163+00:00&quot;,&quot;total&quot;:0.003208145000002105}}" data-execution_count="48">
+<hr>
+<p><a href="https://github.com/vedicreader/pobblebonk/blob/main/pobblebonk/core.py#L355" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="pob.work" class="level3">
+<h3 class="anchored" data-anchor-id="pob.work">Pob.work</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb68"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> work(</span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>    worker:<span class="bu">str</span><span class="op">=</span><span class="st">'tick'</span>, at:<span class="bu">float</span><span class="op">=</span><span class="va">None</span>, limit:<span class="bu">int</span><span class="op">=</span><span class="dv">100</span>, when:<span class="bu">dict</span><span class="op">=</span><span class="va">None</span></span>
+<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>fastcore.foundation.L:</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Claim and run every fire that is due.</em></p>
+</section>
+</div>
+<div id="0fd999e1" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb69"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a>p_work <span class="op">=</span> Pob()</span>
+<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a>seen <span class="op">=</span> []</span>
+<span id="cb69-3"><a href="#cb69-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb69-4"><a href="#cb69-4" aria-hidden="true" tabindex="-1"></a><span class="at">@p_work.on</span>(<span class="st">'task'</span>)</span>
+<span id="cb69-5"><a href="#cb69-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> task(fire):</span>
+<span id="cb69-6"><a href="#cb69-6" aria-hidden="true" tabindex="-1"></a>    seen.append((fire.job, fire.fire_at))</span>
+<span id="cb69-7"><a href="#cb69-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> fire.job</span>
+<span id="cb69-8"><a href="#cb69-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb69-9"><a href="#cb69-9" aria-hidden="true" tabindex="-1"></a>job1 <span class="op">=</span> p_work.q.enqueue({<span class="st">'schedule'</span>: <span class="st">'task'</span>})</span>
+<span id="cb69-10"><a href="#cb69-10" aria-hidden="true" tabindex="-1"></a>job2 <span class="op">=</span> p_work.q.enqueue({<span class="st">'schedule'</span>: <span class="st">'task'</span>})</span>
+<span id="cb69-11"><a href="#cb69-11" aria-hidden="true" tabindex="-1"></a>when <span class="op">=</span> {job1: <span class="dv">10</span>, job2: <span class="dv">20</span>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="f7b0e66b" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb70"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="co"># `limit` leaves the second ready job for another drain.</span></span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>f <span class="op">=</span> p_work.work(<span class="st">'worker'</span>, at<span class="op">=</span><span class="dv">100</span>, limit<span class="op">=</span><span class="dv">1</span>, when<span class="op">=</span>when)<span class="op">;</span> f</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<pre><code>[{'name': 'task', 'status': 'ok', 'result': 1, 'used': 0}]</code></pre>
+</div>
+</div>
+<div id="c43dfc8a" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb72"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>test_eq(f.attrgot(<span class="st">'result'</span>), [job1])</span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>test_eq(seen, [(job1, <span class="dv">10</span>)])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="f655ff34" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb73"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The next drain claims what remains.</span></span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a>second <span class="op">=</span> p_work.work(<span class="st">'worker'</span>, at<span class="op">=</span><span class="dv">100</span>, when<span class="op">=</span>when)</span>
+<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a>test_eq(second.attrgot(<span class="st">'result'</span>), [job2])</span>
+<span id="cb73-4"><a href="#cb73-4" aria-hidden="true" tabindex="-1"></a>test_eq(seen, [(job1, <span class="dv">10</span>), (job2, <span class="dv">20</span>)])</span>
+<span id="cb73-5"><a href="#cb73-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb73-6"><a href="#cb73-6" aria-hidden="true" tabindex="-1"></a><span class="co"># An empty queue returns immediately.</span></span>
+<span id="cb73-7"><a href="#cb73-7" aria-hidden="true" tabindex="-1"></a>test_eq(p_work.work(<span class="st">'worker'</span>, at<span class="op">=</span><span class="dv">100</span>), [])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="long-jobs" class="level2">
+<h2 class="anchored" data-anchor-id="long-jobs">Long jobs</h2>
+<p>A claim lasts <code>lease</code> seconds. While a callback runs, its claim is renewed, so a job that takes an hour is not claimed again by the next <code>work</code>. A worker that dies stops renewing, and after the lease the fire is claimable again. Here the lease is two seconds and the job takes three.</p>
+<div id="3ebe57e6" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb74"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> beating(): <span class="cf">return</span> [t <span class="cf">for</span> t <span class="kw">in</span> threading.<span class="bu">enumerate</span>() <span class="cf">if</span> t.name.startswith(<span class="st">'pob.beat.'</span>)]</span>
+<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-3"><a href="#cb74-3" aria-hidden="true" tabindex="-1"></a>p_long <span class="op">=</span> Pob(lease<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb74-4"><a href="#cb74-4" aria-hidden="true" tabindex="-1"></a><span class="at">@p_long.on</span>(<span class="st">'render'</span>)</span>
+<span id="cb74-5"><a href="#cb74-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> render(fire):</span>
+<span id="cb74-6"><a href="#cb74-6" aria-hidden="true" tabindex="-1"></a>    time.sleep(<span class="dv">3</span>)</span>
+<span id="cb74-7"><a href="#cb74-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="st">'rendered'</span></span>
+<span id="cb74-8"><a href="#cb74-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-9"><a href="#cb74-9" aria-hidden="true" tabindex="-1"></a>p_long.q.enqueue({<span class="st">'schedule'</span>: <span class="st">'render'</span>})</span>
+<span id="cb74-10"><a href="#cb74-10" aria-hidden="true" tabindex="-1"></a>ran <span class="op">=</span> []</span>
+<span id="cb74-11"><a href="#cb74-11" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> threading.Thread(target<span class="op">=</span><span class="kw">lambda</span>: ran.extend(p_long.work(<span class="st">'studio'</span>)))</span>
+<span id="cb74-12"><a href="#cb74-12" aria-hidden="true" tabindex="-1"></a>t.start()</span>
+<span id="cb74-13"><a href="#cb74-13" aria-hidden="true" tabindex="-1"></a>time.sleep(<span class="fl">0.5</span>)</span>
+<span id="cb74-14"><a href="#cb74-14" aria-hidden="true" tabindex="-1"></a>test_eq(<span class="bu">len</span>(beating()), <span class="dv">1</span>)                    <span class="co"># the claim is being renewed</span></span>
+<span id="cb74-15"><a href="#cb74-15" aria-hidden="true" tabindex="-1"></a>time.sleep(<span class="fl">2.5</span>)                               <span class="co"># past the lease</span></span>
+<span id="cb74-16"><a href="#cb74-16" aria-hidden="true" tabindex="-1"></a>test_eq(p_long.work(<span class="st">'other'</span>), [])             <span class="co"># and nobody else gets the job</span></span>
+<span id="cb74-17"><a href="#cb74-17" aria-hidden="true" tabindex="-1"></a>t.join()</span>
+<span id="cb74-18"><a href="#cb74-18" aria-hidden="true" tabindex="-1"></a>test_eq([r.status <span class="cf">for</span> r <span class="kw">in</span> ran], [<span class="st">'ok'</span>])</span>
+<span id="cb74-19"><a href="#cb74-19" aria-hidden="true" tabindex="-1"></a>test_eq(beating(), [])                        <span class="co"># the renewing stopped on return</span></span>
+<span id="cb74-20"><a href="#cb74-20" aria-hidden="true" tabindex="-1"></a>test_eq(p_long.db.query(<span class="st">'SELECT count(*) n FROM _honker_live'</span>)[<span class="dv">0</span>][<span class="st">'n'</span>], <span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>The renewing stops when the callback raises, too:</p>
+<div id="87d6d92c" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb75"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a>p_long.on(<span class="st">'broken'</span>)(<span class="kw">lambda</span> fire: <span class="dv">1</span><span class="op">/</span><span class="dv">0</span>)</span>
+<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a>p_long.q.enqueue({<span class="st">'schedule'</span>: <span class="st">'broken'</span>})</span>
+<span id="cb75-3"><a href="#cb75-3" aria-hidden="true" tabindex="-1"></a>test_eq(p_long.work(<span class="st">'studio'</span>)[<span class="dv">0</span>].status, <span class="st">'retry'</span>)</span>
+<span id="cb75-4"><a href="#cb75-4" aria-hidden="true" tabindex="-1"></a>test_eq(beating(), [])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>A worker killed mid-job leaves its claim to lapse, and the fire runs again:</p>
+<div id="01bcd4e5" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb76"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a>p_crash <span class="op">=</span> Pob(lease<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>p_crash.on(<span class="st">'render'</span>)(<span class="kw">lambda</span> fire: <span class="ss">f'rendered by </span><span class="sc">{</span>fire<span class="sc">.</span>worker<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a>p_crash.q.enqueue({<span class="st">'schedule'</span>: <span class="st">'render'</span>})</span>
+<span id="cb76-4"><a href="#cb76-4" aria-hidden="true" tabindex="-1"></a>test_ne(p_crash.q.claim_one(<span class="st">'dead'</span>), <span class="va">None</span>)    <span class="co"># claimed, then the process died</span></span>
+<span id="cb76-5"><a href="#cb76-5" aria-hidden="true" tabindex="-1"></a>test_eq(p_crash.work(<span class="st">'alive'</span>), [])            <span class="co"># the claim still holds</span></span>
+<span id="cb76-6"><a href="#cb76-6" aria-hidden="true" tabindex="-1"></a>time.sleep(<span class="fl">3.1</span>)</span>
+<span id="cb76-7"><a href="#cb76-7" aria-hidden="true" tabindex="-1"></a>test_eq(p_crash.work(<span class="st">'alive'</span>).attrgot(<span class="st">'result'</span>), [<span class="st">'rendered by alive'</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><code>batch</code> takes part of a list. With <code>batch=1</code> each fire gets one item, in push order, and marks only that one used. A raise leaves its item open for the retry.</p>
+<div id="bc7fb151" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb77"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a>p_batch <span class="op">=</span> Pob(base<span class="op">=</span><span class="dv">60</span>)</span>
+<span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a>p_batch.on(<span class="st">'job'</span>)(<span class="kw">lambda</span> fire: <span class="dv">1</span><span class="op">/</span><span class="dv">0</span>)</span>
+<span id="cb77-3"><a href="#cb77-3" aria-hidden="true" tabindex="-1"></a>p_batch.add(<span class="st">'job'</span>, every<span class="op">=</span><span class="st">'1s'</span>, needs<span class="op">=</span><span class="st">'jobs'</span>, batch<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb77-4"><a href="#cb77-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> t <span class="kw">in</span> <span class="st">'abc'</span>: p_batch.push(<span class="st">'jobs'</span>, t, key<span class="op">=</span>t)</span>
+<span id="cb77-5"><a href="#cb77-5" aria-hidden="true" tabindex="-1"></a>test_eq(p_batch.tick(at<span class="op">=</span>p_batch.get(<span class="st">'job'</span>).next_fire_at).ran.attrgot(<span class="st">'status'</span>), [<span class="st">'retry'</span>])</span>
+<span id="cb77-6"><a href="#cb77-6" aria-hidden="true" tabindex="-1"></a>test_eq(p_batch.items(<span class="st">'jobs'</span>).attrgot(<span class="st">'text'</span>), [<span class="st">'a'</span>, <span class="st">'b'</span>, <span class="st">'c'</span>])   <span class="co"># the raise left its item open</span></span>
+<span id="cb77-7"><a href="#cb77-7" aria-hidden="true" tabindex="-1"></a>test_eq(p_batch.push(<span class="st">'jobs'</span>, <span class="st">'a again'</span>, key<span class="op">=</span><span class="st">'a'</span>).text, <span class="st">'a'</span>)       <span class="co"># and `key` still holds</span></span>
+<span id="cb77-8"><a href="#cb77-8" aria-hidden="true" tabindex="-1"></a>test_eq(<span class="bu">len</span>(p_batch.items(<span class="st">'jobs'</span>)), <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="26a2ce47" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb78"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a>p_three <span class="op">=</span> Pob()</span>
+<span id="cb78-2"><a href="#cb78-2" aria-hidden="true" tabindex="-1"></a>p_three.on(<span class="st">'job'</span>)(<span class="kw">lambda</span> fire: <span class="st">','</span>.join(fire.<span class="bu">list</span>.attrgot(<span class="st">'text'</span>)))</span>
+<span id="cb78-3"><a href="#cb78-3" aria-hidden="true" tabindex="-1"></a>p_three.add(<span class="st">'job'</span>, every<span class="op">=</span><span class="st">'1s'</span>, needs<span class="op">=</span><span class="st">'jobs'</span>, catchup<span class="op">=</span><span class="st">'all'</span>, batch<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb78-4"><a href="#cb78-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> t <span class="kw">in</span> <span class="st">'abc'</span>: p_three.push(<span class="st">'jobs'</span>, t)</span>
+<span id="cb78-5"><a href="#cb78-5" aria-hidden="true" tabindex="-1"></a>_f <span class="op">=</span> p_three.get(<span class="st">'job'</span>).next_fire_at</span>
+<span id="cb78-6"><a href="#cb78-6" aria-hidden="true" tabindex="-1"></a>got <span class="op">=</span> p_three.tick(at<span class="op">=</span>_f <span class="op">+</span> <span class="dv">2</span>).ran</span>
+<span id="cb78-7"><a href="#cb78-7" aria-hidden="true" tabindex="-1"></a>test_eq(got.attrgot(<span class="st">'result'</span>), [<span class="st">'a'</span>, <span class="st">'b'</span>, <span class="st">'c'</span>])           <span class="co"># three fires, one item each, in order</span></span>
+<span id="cb78-8"><a href="#cb78-8" aria-hidden="true" tabindex="-1"></a>test_eq(got.attrgot(<span class="st">'used'</span>), [<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="a-callback-at-a-cadence" class="level2">
+<h2 class="anchored" data-anchor-id="a-callback-at-a-cadence">A callback, at a cadence</h2>
+<p>The headline. A real callback, a real one-second schedule, three real ticks. <code>fire_at</code> is honker’s own boundary, so the gaps say whether the cadence held.</p>
+<div id="0fee12c4" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-11T22:40:20.582616+00:00&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-11T22:40:20.594708+00:00&quot;,&quot;total&quot;:0.012096497000001705}}" data-execution_count="49">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb79"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
+<span id="cb79-2"><a href="#cb79-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb79-3"><a href="#cb79-3" aria-hidden="true" tabindex="-1"></a>pob <span class="op">=</span> Pob()</span>
+<span id="cb79-4"><a href="#cb79-4" aria-hidden="true" tabindex="-1"></a>beats <span class="op">=</span> []</span>
+<span id="cb79-5"><a href="#cb79-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb79-6"><a href="#cb79-6" aria-hidden="true" tabindex="-1"></a><span class="at">@pob.on</span>(<span class="st">'heartbeat'</span>)</span>
+<span id="cb79-7"><a href="#cb79-7" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> beat(fire):</span>
+<span id="cb79-8"><a href="#cb79-8" aria-hidden="true" tabindex="-1"></a>    beats.append(fire.fire_at)</span>
+<span id="cb79-9"><a href="#cb79-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="ss">f'beat </span><span class="sc">{</span><span class="bu">len</span>(beats)<span class="sc">}</span><span class="ss">'</span></span>
+<span id="cb79-10"><a href="#cb79-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb79-11"><a href="#cb79-11" aria-hidden="true" tabindex="-1"></a>pob.add(<span class="st">'heartbeat'</span>, every<span class="op">=</span><span class="st">'1s'</span>)</span>
+<span id="cb79-12"><a href="#cb79-12" aria-hidden="true" tabindex="-1"></a>first_fire <span class="op">=</span> pob.get(<span class="st">'heartbeat'</span>).next_fire_at</span>
+<span id="cb79-13"><a href="#cb79-13" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> at <span class="kw">in</span> <span class="bu">range</span>(first_fire, first_fire <span class="op">+</span> <span class="dv">3</span>): test_eq(pob.tick(at<span class="op">=</span>at).ran.attrgot(<span class="st">'status'</span>), [<span class="st">'ok'</span>])</span>
+<span id="cb79-14"><a href="#cb79-14" aria-hidden="true" tabindex="-1"></a>test_eq(beats, [first_fire, first_fire <span class="op">+</span> <span class="dv">1</span>, first_fire <span class="op">+</span> <span class="dv">2</span>])</span>
+<span id="cb79-15"><a href="#cb79-15" aria-hidden="true" tabindex="-1"></a>test_eq(pob.notes().attrgot(<span class="st">'body'</span>), [<span class="st">'beat 3'</span>, <span class="st">'beat 2'</span>, <span class="st">'beat 1'</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>The answers reached the notes, and every reader gets them once:</p>
+<div id="36394e5a" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb80"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a>test_eq(pob.drain(<span class="st">'leela'</span>).attrgot(<span class="st">'body'</span>), [<span class="st">'beat 1'</span>, <span class="st">'beat 2'</span>, <span class="st">'beat 3'</span>])</span>
+<span id="cb80-2"><a href="#cb80-2" aria-hidden="true" tabindex="-1"></a>test_eq(pob.drain(<span class="st">'leela'</span>), [])                                    <span class="co"># leela is up to date</span></span>
+<span id="cb80-3"><a href="#cb80-3" aria-hidden="true" tabindex="-1"></a>test_eq(<span class="bu">len</span>(pob.drain(<span class="st">'phone'</span>)), <span class="dv">3</span>)                                <span class="co"># the phone has seen nothing yet</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="a-list-a-fire-reads" class="level2">
+<h2 class="anchored" data-anchor-id="a-list-a-fire-reads">A list a fire reads</h2>
+<p>The shopping flow. Push whenever you think of something, and the fire reads the pile.</p>
+<div id="c5bcd7ad8619" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb81"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a>pob2 <span class="op">=</span> Pob()</span>
+<span id="cb81-2"><a href="#cb81-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-3"><a href="#cb81-3" aria-hidden="true" tabindex="-1"></a><span class="at">@pob2.on</span>(<span class="st">'cart'</span>)</span>
+<span id="cb81-4"><a href="#cb81-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> cart(fire):</span>
+<span id="cb81-5"><a href="#cb81-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="st">'added: '</span> <span class="op">+</span> <span class="st">', '</span>.join(i.text <span class="cf">for</span> i <span class="kw">in</span> fire.<span class="bu">list</span>)</span>
+<span id="cb81-6"><a href="#cb81-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-7"><a href="#cb81-7" aria-hidden="true" tabindex="-1"></a>pob2.add(<span class="st">'cart'</span>, every<span class="op">=</span><span class="st">'1s'</span>, needs<span class="op">=</span><span class="st">'shopping'</span>)</span>
+<span id="cb81-8"><a href="#cb81-8" aria-hidden="true" tabindex="-1"></a>pob2.push(<span class="st">'shopping'</span>, <span class="st">'yoghurt, the greek one'</span>, key<span class="op">=</span><span class="st">'img_2201.heic'</span>)</span>
+<span id="cb81-9"><a href="#cb81-9" aria-hidden="true" tabindex="-1"></a>pob2.push(<span class="st">'shopping'</span>, <span class="st">'yoghurt, the greek one'</span>, key<span class="op">=</span><span class="st">'img_2201.heic'</span>)   <span class="co"># the same photo twice</span></span>
+<span id="cb81-10"><a href="#cb81-10" aria-hidden="true" tabindex="-1"></a>pob2.push(<span class="st">'shopping'</span>, <span class="st">'oat milk'</span>)</span>
+<span id="cb81-11"><a href="#cb81-11" aria-hidden="true" tabindex="-1"></a>test_eq(pob2.items(<span class="st">'shopping'</span>).attrgot(<span class="st">'text'</span>), [<span class="st">'yoghurt, the greek one'</span>, <span class="st">'oat milk'</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><code>fire.list</code> is the pile, not <code>dict.items</code>. That collision cost a real bug, so it is asserted:</p>
+<div id="d8e922e0" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb82"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a>time.sleep(<span class="fl">1.05</span>)</span>
+<span id="cb82-2"><a href="#cb82-2" aria-hidden="true" tabindex="-1"></a>got <span class="op">=</span> pob2.tick().ran[<span class="dv">0</span>]</span>
+<span id="cb82-3"><a href="#cb82-3" aria-hidden="true" tabindex="-1"></a>test_eq(got.status, <span class="st">'ok'</span>)</span>
+<span id="cb82-4"><a href="#cb82-4" aria-hidden="true" tabindex="-1"></a>test_eq(got.result, <span class="st">'added: yoghurt, the greek one, oat milk'</span>)</span>
+<span id="cb82-5"><a href="#cb82-5" aria-hidden="true" tabindex="-1"></a>test_eq(got.used, <span class="dv">2</span>)</span>
+<span id="cb82-6"><a href="#cb82-6" aria-hidden="true" tabindex="-1"></a>test_eq(pob2.items(<span class="st">'shopping'</span>), [])              <span class="co"># used, but only because the callback returned</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>A fire whose list emptied in the meantime is skipped, not failed. There is nothing wrong and nothing to say:</p>
+<div id="684dfa8e1e6f" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb83"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a>time.sleep(<span class="fl">1.05</span>)</span>
+<span id="cb83-2"><a href="#cb83-2" aria-hidden="true" tabindex="-1"></a>got <span class="op">=</span> pob2.tick().ran[<span class="dv">0</span>]</span>
+<span id="cb83-3"><a href="#cb83-3" aria-hidden="true" tabindex="-1"></a>test_eq(got.status, <span class="st">'skipped'</span>)</span>
+<span id="cb83-4"><a href="#cb83-4" aria-hidden="true" tabindex="-1"></a>test_eq(got.why, <span class="st">'the shopping list is empty'</span>)</span>
+<span id="cb83-5"><a href="#cb83-5" aria-hidden="true" tabindex="-1"></a>test_eq(<span class="bu">len</span>(pob2.notes()), <span class="dv">1</span>)                    <span class="co"># and no second note</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>A schedule with no callback registered fails loudly rather than vanishing:</p>
+<div id="5f39f775" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb84"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a>pob4 <span class="op">=</span> Pob()</span>
+<span id="cb84-2"><a href="#cb84-2" aria-hidden="true" tabindex="-1"></a>pob4.add(<span class="st">'nobody'</span>, every<span class="op">=</span><span class="st">'1s'</span>)</span>
+<span id="cb84-3"><a href="#cb84-3" aria-hidden="true" tabindex="-1"></a>time.sleep(<span class="fl">1.05</span>)</span>
+<span id="cb84-4"><a href="#cb84-4" aria-hidden="true" tabindex="-1"></a>test_eq(pob4.tick().ran[<span class="dv">0</span>].error, <span class="st">"no callback registered for 'nobody'"</span>)</span>
+<span id="cb84-5"><a href="#cb84-5" aria-hidden="true" tabindex="-1"></a>test_eq(pob4.notes()[<span class="dv">0</span>].body, <span class="st">"no callback registered for 'nobody'"</span>)   <span class="co"># and it leaves a note</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="pausing-dropping-and-what-is-refused" class="level2">
+<h2 class="anchored" data-anchor-id="pausing-dropping-and-what-is-refused">Pausing, dropping, and what is refused</h2>
+<div id="05c40a95700d" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb85"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a>pob5 <span class="op">=</span> Pob()</span>
+<span id="cb85-2"><a href="#cb85-2" aria-hidden="true" tabindex="-1"></a>pob5.on(<span class="st">'cart'</span>)(<span class="kw">lambda</span> fire: <span class="st">'ok'</span>)</span>
+<span id="cb85-3"><a href="#cb85-3" aria-hidden="true" tabindex="-1"></a>pob5.add(<span class="st">'cart'</span>, every<span class="op">=</span><span class="st">'1s'</span>)</span>
+<span id="cb85-4"><a href="#cb85-4" aria-hidden="true" tabindex="-1"></a>test_eq(pob5.pause(<span class="st">'cart'</span>), <span class="va">True</span>)</span>
+<span id="cb85-5"><a href="#cb85-5" aria-hidden="true" tabindex="-1"></a>time.sleep(<span class="fl">1.05</span>)</span>
+<span id="cb85-6"><a href="#cb85-6" aria-hidden="true" tabindex="-1"></a>test_eq(pob5.tick().ran, [])</span>
+<span id="cb85-7"><a href="#cb85-7" aria-hidden="true" tabindex="-1"></a>test_eq(pob5.resume(<span class="st">'cart'</span>), <span class="va">True</span>)</span>
+<span id="cb85-8"><a href="#cb85-8" aria-hidden="true" tabindex="-1"></a>test_eq(pob5.drop(<span class="st">'cart'</span>), <span class="va">True</span>)</span>
+<span id="cb85-9"><a href="#cb85-9" aria-hidden="true" tabindex="-1"></a>test_eq(pob5.<span class="bu">all</span>(), [])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>test_fail(lambda: pob5.add(‘bad’, every=‘1h’, cron=’0 17 *‘), contains=’one of’) test_fail(lambda: pob5.add(‘bad’), contains=‘one of’) test_fail(lambda: pob5.add(‘bad’, every=‘1h’, catchup=‘maybe’), contains=‘catchup must be’) test_fail(lambda: pob5.add(‘bad’, cron=‘every friday’), contains=‘cron’)</p>
+</section>
+<section id="sharing-the-file" class="level2">
+<h2 class="anchored" data-anchor-id="sharing-the-file">Sharing the file</h2>
+<p>Every method takes a honker database rather than opening one, so pobblebonk can live in a file something else already has open. The fire and the write that caused it commit together.</p>
+<div id="b2f43a17" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-11T22:40:20.597295+00:00&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-11T22:40:20.606371+00:00&quot;,&quot;total&quot;:0.009078483999999776}}" data-execution_count="50">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb86"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> honker</span>
+<span id="cb86-2"><a href="#cb86-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb86-3"><a href="#cb86-3" aria-hidden="true" tabindex="-1"></a>db <span class="op">=</span> honker.<span class="bu">open</span>(<span class="bu">str</span>(Path(mkdtemp())<span class="op">/</span><span class="st">'app.db'</span>))</span>
+<span id="cb86-4"><a href="#cb86-4" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> db.transaction() <span class="im">as</span> tx:</span>
+<span id="cb86-5"><a href="#cb86-5" aria-hidden="true" tabindex="-1"></a>    tx.execute(<span class="st">'CREATE TABLE docs (id TEXT PRIMARY KEY, text TEXT)'</span>)</span>
+<span id="cb86-6"><a href="#cb86-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb86-7"><a href="#cb86-7" aria-hidden="true" tabindex="-1"></a>pob6 <span class="op">=</span> Pob(db<span class="op">=</span>db)</span>
+<span id="cb86-8"><a href="#cb86-8" aria-hidden="true" tabindex="-1"></a>pob6.on(<span class="st">'index'</span>)(<span class="kw">lambda</span> fire: <span class="st">'indexed'</span>)</span>
+<span id="cb86-9"><a href="#cb86-9" aria-hidden="true" tabindex="-1"></a>pob6.add(<span class="st">'index'</span>, every<span class="op">=</span><span class="st">'1s'</span>)</span>
+<span id="cb86-10"><a href="#cb86-10" aria-hidden="true" tabindex="-1"></a>test_eq(pob6.db <span class="kw">is</span> db, <span class="va">True</span>)</span>
+<span id="cb86-11"><a href="#cb86-11" aria-hidden="true" tabindex="-1"></a>test_eq(<span class="bu">len</span>(pob6.<span class="bu">all</span>()), <span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="19180373" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb87"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a>test_fail(<span class="kw">lambda</span>: pob5.add(<span class="st">'bad'</span>, every<span class="op">=</span><span class="st">'1h'</span>, cron<span class="op">=</span><span class="st">'0 17 * * *'</span>), contains<span class="op">=</span><span class="st">'one of'</span>)</span>
+<span id="cb87-2"><a href="#cb87-2" aria-hidden="true" tabindex="-1"></a>test_fail(<span class="kw">lambda</span>: pob5.add(<span class="st">'bad'</span>), contains<span class="op">=</span><span class="st">'one of'</span>)</span>
+<span id="cb87-3"><a href="#cb87-3" aria-hidden="true" tabindex="-1"></a>test_fail(<span class="kw">lambda</span>: pob5.add(<span class="st">'bad'</span>, every<span class="op">=</span><span class="st">'1h'</span>, catchup<span class="op">=</span><span class="st">'maybe'</span>), contains<span class="op">=</span><span class="st">'catchup must be'</span>)</span>
+<span id="cb87-4"><a href="#cb87-4" aria-hidden="true" tabindex="-1"></a>test_fail(<span class="kw">lambda</span>: pob5.add(<span class="st">'bad'</span>, cron<span class="op">=</span><span class="st">'every friday'</span>), contains<span class="op">=</span><span class="st">'cron'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/vedicreader\.github\.io\/pobblebonk");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/vedicreader/pobblebonk/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
