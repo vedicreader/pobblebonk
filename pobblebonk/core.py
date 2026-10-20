@@ -139,11 +139,12 @@ def add(self:Pob,
         start:float=None,     # epoch seconds for the first fire; None lets the cadence pick it
         retries:int=None,     # attempts a failing fire gets; None -> the Pob's own
         batch:int=None,       # items of `needs` one fire takes, oldest first; None takes them all
-        **payload             # anything the callback wants
+        **payload             # anything the callback wants; `retry_after`, a duration, replaces the doubling delay before a retry
 ) -> AttrDict:
     'Write down a standing instruction.'
     if bool(cron) == bool(every): raise ValueError('a schedule needs one of `cron` or `every`')
     catchup_n(catchup)
+    if payload.get('retry_after') is not None: secs(payload['retry_after'])
     self.sched.add(name=str(name), queue=FIRES, payload=dict(
         schedule=str(name), needs=needs, catchup=catchup, batch=_batch(batch), **payload),
         schedule=crontab(cron) if cron else every_s(secs(every)),
@@ -194,6 +195,7 @@ def update(self:Pob,
     if cron is not None and every is not None: raise ValueError('a schedule update accepts only one of `cron` or `every`')
     if 'catchup' in payload: catchup_n(payload['catchup'])
     if 'batch' in payload: _batch(payload['batch'])
+    if payload.get('retry_after') is not None: secs(payload['retry_after'])
     if (was := self.get(name)) is None: return None
     changes = {}
     if cron is not None: changes['schedule'] = crontab(cron)
@@ -290,7 +292,7 @@ def _failed(self:Pob, job, row, name:str, exc:Exception) -> AttrDict:
     err = f'{type(exc).__name__}: {exc}'
     left = max(0, int(row.get('max_attempts') or job.max_attempts or 1) - job.attempts)
     if left:
-        delay = backoff(job.attempts, self.base)
+        delay = secs(ra) if (ra := (job.payload or {}).get('retry_after')) else backoff(job.attempts, self.base)
         if job.retry(int(delay),err): return AttrDict(name=name,status='retry',error=err,attempt=job.attempts,attempts_left=left,after=delay)
     job.fail(err)
     self.note(name, f'gave up after {job.attempts} tries. {err}', ref=job.id, dead=True)
