@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.19">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="what wakes the tick on this machine">
+
+<title>heartbeat – pobblebonk</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-bf27225e3a48a9273f3daa8f8e829971.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-f2788e636de456f6409e966386820849.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="heartbeat – pobblebonk">
+<meta property="og:description" content="what wakes the tick on this machine">
+<meta property="og:site_name" content="pobblebonk">
+<meta name="twitter:title" content="heartbeat – pobblebonk">
+<meta name="twitter:description" content="what wakes the tick on this machine">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">pobblebonk</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools tools-end">
+</div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./heartbeat.html">heartbeat</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">pobblebonk</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./core.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">core</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./heartbeat.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">heartbeat</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#the-launcher" id="toc-the-launcher" class="nav-link active" data-scroll-target="#the-launcher">The launcher</a></li>
+  <li><a href="#what-a-scheduler-has-to-do" id="toc-what-a-scheduler-has-to-do" class="nav-link" data-scroll-target="#what-a-scheduler-has-to-do">What a scheduler has to do</a></li>
+  <li><a href="#cron" id="toc-cron" class="nav-link" data-scroll-target="#cron">cron</a></li>
+  <li><a href="#launchd" id="toc-launchd" class="nav-link" data-scroll-target="#launchd">launchd</a></li>
+  <li><a href="#task-scheduler" id="toc-task-scheduler" class="nav-link" data-scroll-target="#task-scheduler">Task Scheduler</a></li>
+  <li><a href="#installing-one" id="toc-installing-one" class="nav-link" data-scroll-target="#installing-one">Installing one</a></li>
+  <li><a href="#what-this-does-not-do" id="toc-what-this-does-not-do" class="nav-link" data-scroll-target="#what-this-does-not-do">What this does not do</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/vedicreader/pobblebonk/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="heartbeat.html.md"><i class="bi bi-file-code"></i>Markdown</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">heartbeat</h1>
+</div>
+
+<div>
+  <div class="description">
+    what wakes the tick on this machine
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<p>There is no scheduler daemon. <a href="https://vedicreader.github.io/pobblebonk/core.html#pob.tick"><code>Pob.tick</code></a> runs only when an outside process calls it. This module installs that recurring call in the machine scheduler.</p>
+<p>The machine heartbeat knows only its interval. pobblebonk keeps schedule times, pauses, retries, catch-up policy, and list requirements in SQLite. Mirroring those values into the machine scheduler would create a second schedule definition.</p>
+<p><a href="https://vedicreader.github.io/pobblebonk/heartbeat.html#cronbeat"><code>CronBeat</code></a> writes a crontab line. <a href="https://vedicreader.github.io/pobblebonk/heartbeat.html#launchdbeat"><code>LaunchdBeat</code></a> writes a LaunchAgent. <a href="https://vedicreader.github.io/pobblebonk/heartbeat.html#taskbeat"><code>TaskBeat</code></a> calls <code>schtasks</code>. They share the <a href="https://vedicreader.github.io/pobblebonk/heartbeat.html#beat"><code>Beat</code></a> interface, and <a href="https://vedicreader.github.io/pobblebonk/heartbeat.html#beat"><code>beat()</code></a> selects the implementation for this machine.</p>
+<p>Three machines, three schedulers. <a href="https://vedicreader.github.io/pobblebonk/heartbeat.html#cronbeat"><code>CronBeat</code></a> writes a crontab line. <a href="https://vedicreader.github.io/pobblebonk/heartbeat.html#launchdbeat"><code>LaunchdBeat</code></a> writes a LaunchAgent, which is what macOS actually wants. <a href="https://vedicreader.github.io/pobblebonk/heartbeat.html#taskbeat"><code>TaskBeat</code></a> calls <code>schtasks</code>. They share the <a href="https://vedicreader.github.io/pobblebonk/heartbeat.html#beat"><code>Beat</code></a> interface, and <a href="https://vedicreader.github.io/pobblebonk/heartbeat.html#beat"><code>beat()</code></a> picks.</p>
+<p>One tag names everything: the launcher file, its log, and the job in whichever scheduler. Change it and you have a second, independent heartbeat, which is how one machine ticks two databases.</p>
+<p><code>every</code> is the heartbeat interval in seconds. It defaults to 60. Portable intervals are whole minutes that divide an hour: 60, 120, 300, 600, 900, 1200, 1800, or 3600 seconds. cron and Task Scheduler set that common limit.</p>
+<div id="5c6a2157" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-20T05:33:51.778531+00:00&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-20T05:33:51.814740+00:00&quot;,&quot;total&quot;:0.036210734000000855}}" data-execution_count="4">
+<hr>
+<p><a href="https://github.com/vedicreader/pobblebonk/blob/main/pobblebonk/heartbeat.py#L23" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="every_mins" class="level3">
+<h3 class="anchored" data-anchor-id="every_mins">every_mins</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> every_mins(</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    every:<span class="bu">int</span><span class="op">=</span><span class="dv">60</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span><span class="bu">int</span>:</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Whole minutes between portable heartbeat runs.</em></p>
+</section>
+</div>
+<section id="the-launcher" class="level2">
+<h2 class="anchored" data-anchor-id="the-launcher">The launcher</h2>
+<p>Every backend schedules one launcher file. cron, launchd, and <code>schtasks</code> disagree about command quoting. <code>schtasks /tr</code> also limits command length. A launcher gives each scheduler one path and gives the user a command they can run directly.</p>
+<p><code>cmd</code> is a shell command such as <code>uv run --directory ~/app python -m app.tick</code>. The launcher writes it without escaping. <code>&gt;&gt;</code> appends each result to the log. <code>newline=''</code> preserves <code>\r\n</code> in the Windows file. Without it, Python writes <code>\r\r\n</code>, which <code>cmd</code> reads as a blank line.</p>
+<div id="e4a625f6" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-20T05:33:51.815685+00:00&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-20T05:33:51.817566+00:00&quot;,&quot;total&quot;:0.001882423999994387}}" data-execution_count="6">
+<hr>
+<p><a href="https://github.com/vedicreader/pobblebonk/blob/main/pobblebonk/heartbeat.py#L32" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="launcher" class="level3">
+<h3 class="anchored" data-anchor-id="launcher">launcher</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> launcher(</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    cmd:<span class="bu">str</span>, <span class="co"># the command one beat runs, as you would type it</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    dirn:NoneType<span class="op">=</span><span class="va">None</span>, <span class="co"># where to write it; `~/.pobblebonk` by default</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    tag:<span class="bu">str</span><span class="op">=</span><span class="st">'pobblebonk'</span>, <span class="co"># names this file and its log</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    win:<span class="bu">bool</span><span class="op">=</span><span class="va">None</span>, <span class="co"># write a Windows `.cmd`; this platform decides by default</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>pathlib.Path:</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Write the one file every backend schedules, and give back its path.</em></p>
+</section>
+</div>
+<p>The point of writing a file rather than a command string is that the file runs. So run it:</p>
+<div id="3c0cdcda" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-20T05:33:51.817793+00:00&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-20T05:33:51.821415+00:00&quot;,&quot;total&quot;:0.003624387999998646}}" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> subprocess</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tempfile <span class="im">import</span> mkdtemp</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>d <span class="op">=</span> Path(mkdtemp())</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>sh <span class="op">=</span> launcher(<span class="st">'/bin/echo ticked'</span>, d, tag<span class="op">=</span><span class="st">'demo'</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>test_eq(sh.name, <span class="st">'demo.sh'</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>test_eq(subprocess.run([<span class="bu">str</span>(sh)]).returncode, <span class="dv">0</span>)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>test_eq((d<span class="op">/</span><span class="st">'demo.log'</span>).read_text(), <span class="st">'ticked</span><span class="ch">\n</span><span class="st">'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="ea7a69e2" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># A second beat appends. A log holding only the most recent tick would be useless the one</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># morning you go looking for what happened at 3am.</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>subprocess.run([<span class="bu">str</span>(sh)])</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>test_eq((d<span class="op">/</span><span class="st">'demo.log'</span>).read_text().count(<span class="st">'ticked'</span>), <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="23285698" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The same command, told it is on Windows: a different file, and a shell that has never heard</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># of `#!`.</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>cmd <span class="op">=</span> launcher(<span class="st">'py -m app.tick'</span>, d, tag<span class="op">=</span><span class="st">'demo'</span>, win<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>test_eq(cmd.name, <span class="st">'demo.cmd'</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>test_eq(cmd.read_text().splitlines()[<span class="dv">0</span>], <span class="st">'@echo off'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="what-a-scheduler-has-to-do" class="level2">
+<h2 class="anchored" data-anchor-id="what-a-scheduler-has-to-do">What a scheduler has to do</h2>
+<p><a href="https://vedicreader.github.io/pobblebonk/heartbeat.html#install"><code>install</code></a> replaces the job for a tag. <a href="https://vedicreader.github.io/pobblebonk/heartbeat.html#installed"><code>installed</code></a> returns its launcher path. <a href="https://vedicreader.github.io/pobblebonk/heartbeat.html#uninstall"><code>uninstall</code></a> removes it. Replacement prevents two processes from racing for the same fires.</p>
+<p>Each backend uses an operating-system identity: a crontab comment, a plist filename, or <code>schtasks /f</code>.</p>
+<div id="9f00ac16" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-20T05:33:51.822622+00:00&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-20T05:33:51.824856+00:00&quot;,&quot;total&quot;:0.002236283000002004}}" data-execution_count="9">
+<hr>
+<p><a href="https://github.com/vedicreader/pobblebonk/blob/main/pobblebonk/heartbeat.py#L48" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="beat" class="level3">
+<h3 class="anchored" data-anchor-id="beat">Beat</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> Beat(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>args, <span class="op">**</span>kwargs</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>):</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>One machine’s way of running a file at a portable interval.</em></p>
+<p><a href="https://vedicreader.github.io/pobblebonk/heartbeat.html#install"><code>install</code></a> replaces what <code>tag</code> installed before. <a href="https://vedicreader.github.io/pobblebonk/heartbeat.html#installed"><code>installed</code></a> reads back what is really scheduled, not what we hoped, so it is the honest way to answer “is this thing on”.</p>
+</section>
+</div>
+</section>
+<section id="cron" class="level2">
+<h2 class="anchored" data-anchor-id="cron">cron</h2>
+<p>A user has one crontab, which can contain unrelated jobs. <code>python-crontab</code> finds this job by its trailing comment and preserves the other entries. It is available through the <code>pobblebonk[cron]</code> extra.</p>
+<p><code>tabfile</code> redirects these operations to another crontab. The tests use a temporary file.</p>
+<div id="17aa5408" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-20T05:33:51.827163+00:00&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-20T05:33:51.829335+00:00&quot;,&quot;total&quot;:0.002174641000003419}}" data-execution_count="11">
+<hr>
+<p><a href="https://github.com/vedicreader/pobblebonk/blob/main/pobblebonk/heartbeat.py#L71" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="cronbeat" class="level3">
+<h3 class="anchored" data-anchor-id="cronbeat">CronBeat</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> CronBeat(</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    tabfile:NoneType<span class="op">=</span><span class="va">None</span>, <span class="co"># a crontab file to edit; None is the live user crontab</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>):</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>A line in the user crontab. Linux, and anywhere without something better.</em></p>
+</section>
+</div>
+<div id="9e64f013" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-20T05:33:51.829419+00:00&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-20T05:33:51.831637+00:00&quot;,&quot;total&quot;:0.0022205389999996328}}" data-execution_count="12">
+<hr>
+<p><a href="https://github.com/vedicreader/pobblebonk/blob/main/pobblebonk/heartbeat.py#L65" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="cron_line" class="level3">
+<h3 class="anchored" data-anchor-id="cron_line">cron_line</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> cron_line(</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    every:<span class="bu">int</span><span class="op">=</span><span class="dv">60</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span><span class="bu">str</span>:</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>The portable cron expression for a heartbeat interval.</em></p>
+</section>
+</div>
+<p>A crontab with somebody’s nightly backup already in it. Everything below is about that line surviving.</p>
+<div id="34499f1e" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>tabfile <span class="op">=</span> d<span class="op">/</span><span class="st">'crontab'</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>tabfile.write_text(<span class="st">'# nightly backup</span><span class="ch">\n</span><span class="st">0 3 * * * /usr/bin/backup</span><span class="ch">\n</span><span class="st">'</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>cron <span class="op">=</span> CronBeat(tabfile)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>cron.install(<span class="st">'/home/k/.pobblebonk/pobblebonk.sh'</span>, every<span class="op">=</span><span class="dv">120</span>)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(tabfile.read_text())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># nightly backup
+0 3 * * * /usr/bin/backup
+*/2 * * * * /home/k/.pobblebonk/pobblebonk.sh # pobblebonk
+</code></pre>
+</div>
+</div>
+<div id="3dfdd858" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>test_eq(cron.installed(), <span class="st">'/home/k/.pobblebonk/pobblebonk.sh'</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="st">'*/2 * * * * /home/k/.pobblebonk/pobblebonk.sh'</span> <span class="kw">in</span> tabfile.read_text()</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="st">'0 3 * * * /usr/bin/backup'</span> <span class="kw">in</span> tabfile.read_text()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="bd9ecb6f" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Installing again replaces the line rather than adding a second one.</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>cron.install(<span class="st">'/home/k/.pobblebonk/pobblebonk.sh'</span>, every<span class="op">=</span><span class="dv">120</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>test_eq(tabfile.read_text().count(<span class="st">'pobblebonk.sh'</span>), <span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="638a48b1" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Removing ours removes only ours, and says whether there was anything there.</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>test_eq(cron.uninstall(), <span class="va">True</span>)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>test_eq(cron.installed(), <span class="va">None</span>)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>test_eq(cron.uninstall(), <span class="va">False</span>)</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="st">'0 3 * * * /usr/bin/backup'</span> <span class="kw">in</span> tabfile.read_text()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="launchd" class="level2">
+<h2 class="anchored" data-anchor-id="launchd">launchd</h2>
+<p>macOS cron jobs run without Full Disk Access. A callback that reads <code>~/Documents</code> can therefore fail. cron also drops times missed while the machine sleeps. launchd runs one missed <code>StartInterval</code> after waking, which lets <code>catchup</code> process missed fires.</p>
+<p>A LaunchAgent is a plist in <code>~/Library/LaunchAgents</code>. Its filename is its identity. Installation writes the plist, runs <code>bootout</code> for the previous job, then runs <code>bootstrap</code> for the replacement.</p>
+<p><a href="https://vedicreader.github.io/pobblebonk/heartbeat.html#_run"><code>_run</code></a> calls a scheduler binary. With <code>check=True</code>, a missing binary or rejected command raises an exception. This prevents a failed installation from appearing successful. Output is decoded here because <code>schtasks</code> returns UTF-16.</p>
+<div id="9ac746bf" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-20T05:33:51.835800+00:00&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-20T05:33:51.837971+00:00&quot;,&quot;total&quot;:0.002173680000005618}}" data-execution_count="15">
+<hr>
+<p><a href="https://github.com/vedicreader/pobblebonk/blob/main/pobblebonk/heartbeat.py#L124" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="launchdbeat" class="level3">
+<h3 class="anchored" data-anchor-id="launchdbeat">LaunchdBeat</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> LaunchdBeat(</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    dirn:NoneType<span class="op">=</span><span class="va">None</span>, <span class="co"># where agents live; `~/Library/LaunchAgents` by default</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>):</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>A LaunchAgent. What macOS wants, and it survives a sleeping laptop where cron does not.</em></p>
+</section>
+</div>
+<div id="2647881c" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-20T05:33:51.838054+00:00&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-20T05:33:51.840412+00:00&quot;,&quot;total&quot;:0.0023601380000002337}}" data-execution_count="16">
+<hr>
+<p><a href="https://github.com/vedicreader/pobblebonk/blob/main/pobblebonk/heartbeat.py#L115" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="plist" class="level3">
+<h3 class="anchored" data-anchor-id="plist">plist</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plist(</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    script, <span class="co"># the launcher to run</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    tag:<span class="bu">str</span><span class="op">=</span><span class="st">'pobblebonk'</span>, <span class="co"># the launchd label, and the plist filename</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    every:<span class="bu">int</span><span class="op">=</span><span class="dv">60</span>, <span class="co"># seconds between beats</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span><span class="bu">bytes</span>:</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>The job description launchd reads: run <code>script</code> every <code>every</code> seconds.</em></p>
+</section>
+</div>
+<p>launchd rejects invalid plists and ignores unknown keys. The checks parse the plist and inspect the launchd key names.</p>
+<div id="c76ed2ff" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>got <span class="op">=</span> plistlib.loads(plist(<span class="st">'/home/k/.pobblebonk/pobblebonk.sh'</span>, every<span class="op">=</span><span class="dv">120</span>))</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>test_eq(got[<span class="st">'Label'</span>], <span class="st">'pobblebonk'</span>)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>test_eq(got[<span class="st">'ProgramArguments'</span>], [<span class="st">'/home/k/.pobblebonk/pobblebonk.sh'</span>])</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>test_eq(got[<span class="st">'StartInterval'</span>], <span class="dv">120</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Reading an agent back and removing it are plain file operations, so they run anywhere. Only the <code>launchctl</code> call in <a href="https://vedicreader.github.io/pobblebonk/heartbeat.html#install"><code>install</code></a> needs a Mac, and it is the one line here that this notebook cannot check.</p>
+<div id="893f7c7b" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>agents <span class="op">=</span> d<span class="op">/</span><span class="st">'LaunchAgents'</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>agents.mkdir()</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>(agents<span class="op">/</span><span class="st">'pobblebonk.plist'</span>).write_bytes(plist(<span class="st">'/home/k/.pobblebonk/pobblebonk.sh'</span>))</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>launchd <span class="op">=</span> LaunchdBeat(agents)</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>test_eq(launchd.installed(), <span class="st">'/home/k/.pobblebonk/pobblebonk.sh'</span>)</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>test_eq(launchd.uninstall(), <span class="va">True</span>)</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>test_eq(launchd.installed(), <span class="va">None</span>)</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>test_eq(launchd.uninstall(), <span class="va">False</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="task-scheduler" class="level2">
+<h2 class="anchored" data-anchor-id="task-scheduler">Task Scheduler</h2>
+<p><code>schtasks /f</code> replaces a task with the same name. <code>/sc minute /mo N</code> runs it every <code>N</code> minutes. The launcher path stays unquoted because <code>subprocess</code> quotes arguments that contain spaces.</p>
+<p><code>/query /xml</code> reads the installed command without depending on the display language. The XML is UTF-16, uses a namespace, and can quote the command.</p>
+<div id="1e2405de" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-20T05:33:51.842553+00:00&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-20T05:33:51.844094+00:00&quot;,&quot;total&quot;:0.001543357000002743}}" data-execution_count="18">
+<hr>
+<p><a href="https://github.com/vedicreader/pobblebonk/blob/main/pobblebonk/heartbeat.py#L166" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="taskbeat" class="level3">
+<h3 class="anchored" data-anchor-id="taskbeat">TaskBeat</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> TaskBeat(</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>args, <span class="op">**</span>kwargs</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>):</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>A Windows Task Scheduler entry, through <code>schtasks</code>.</em></p>
+</section>
+</div>
+<div id="854deb33" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-20T05:33:51.844149+00:00&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-20T05:33:51.845792+00:00&quot;,&quot;total&quot;:0.0016443740000013918}}" data-execution_count="19">
+<hr>
+<p><a href="https://github.com/vedicreader/pobblebonk/blob/main/pobblebonk/heartbeat.py#L152" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="task_args" class="level3">
+<h3 class="anchored" data-anchor-id="task_args">task_args</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> task_args(</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    script, <span class="co"># the launcher to run</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    tag:<span class="bu">str</span><span class="op">=</span><span class="st">'pobblebonk'</span>, <span class="co"># the task name</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    every:<span class="bu">int</span><span class="op">=</span><span class="dv">60</span>, <span class="co"># seconds between beats</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span><span class="bu">list</span>:</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>The <code>schtasks</code> command that creates the task. <code>/f</code> is what makes a second install replace the first.</em></p>
+</section>
+</div>
+<p>The Windows checks inspect the <code>schtasks</code> command without running it. <code>/f</code> proves installation replaces the existing task.</p>
+<div id="7d8ecb9e" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>args <span class="op">=</span> task_args(<span class="vs">r'C:</span><span class="er">\</span><span class="vs">Users</span><span class="er">\</span><span class="vs">k</span><span class="ch">\.</span><span class="vs">pobblebonk</span><span class="er">\</span><span class="vs">pobblebonk</span><span class="dv">.</span><span class="vs">cmd'</span>, every<span class="op">=</span><span class="dv">120</span>)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="st">'/f'</span> <span class="kw">in</span> args</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>test_eq(args[args.index(<span class="st">'/tn'</span>)<span class="op">+</span><span class="dv">1</span>], <span class="st">'pobblebonk'</span>)</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>test_eq(args[args.index(<span class="st">'/mo'</span>)<span class="op">+</span><span class="dv">1</span>], <span class="st">'2'</span>)</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>test_eq(args[<span class="op">-</span><span class="dv">1</span>], <span class="vs">r'C:</span><span class="er">\</span><span class="vs">Users</span><span class="er">\</span><span class="vs">k</span><span class="ch">\.</span><span class="vs">pobblebonk</span><span class="er">\</span><span class="vs">pobblebonk</span><span class="dv">.</span><span class="vs">cmd'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="5792b8c4" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># What `schtasks /query /xml ONE` gives back: UTF-16, namespaced, and the command quoted whether</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co"># or not it needed to be.</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>xml <span class="op">=</span> <span class="st">'''&lt;?xml version="1.0" encoding="UTF-16"?&gt;</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="st">&lt;Task version="1.2" xmlns="http://schemas.microsoft.com/windows/2004/02/mit/task"&gt;</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="st">  &lt;Triggers&gt;&lt;TimeTrigger&gt;&lt;Repetition&gt;&lt;Interval&gt;PT1M&lt;/Interval&gt;&lt;/Repetition&gt;&lt;/TimeTrigger&gt;&lt;/Triggers&gt;</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="st">  &lt;Actions Context="Author"&gt;</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="st">    &lt;Exec&gt;&lt;Command&gt;"C:</span><span class="ch">\\</span><span class="st">Users</span><span class="ch">\\</span><span class="st">k</span><span class="ch">\\</span><span class="st">.pobblebonk</span><span class="ch">\\</span><span class="st">pobblebonk.cmd"&lt;/Command&gt;&lt;/Exec&gt;</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="st">  &lt;/Actions&gt;</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="st">&lt;/Task&gt;'''</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>test_eq(_task_command(_text(xml.encode(<span class="st">'utf-16'</span>))), <span class="st">'C:</span><span class="ch">\\</span><span class="st">Users</span><span class="ch">\\</span><span class="st">k</span><span class="ch">\\</span><span class="st">.pobblebonk</span><span class="ch">\\</span><span class="st">pobblebonk.cmd'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="installing-one" class="level2">
+<h2 class="anchored" data-anchor-id="installing-one">Installing one</h2>
+<p><a href="https://vedicreader.github.io/pobblebonk/heartbeat.html#beat"><code>beat</code></a> selects the scheduler for the current platform. <a href="https://vedicreader.github.io/pobblebonk/heartbeat.html#install"><code>install</code></a> writes the launcher, schedules it, and returns its path.</p>
+<p><code>on</code> accepts a specific <a href="https://vedicreader.github.io/pobblebonk/heartbeat.html#beat"><code>Beat</code></a>. Tests use it to exercise the public path without changing the machine scheduler.</p>
+<div id="e67d829c" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-20T05:33:51.846939+00:00&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-20T05:33:51.848495+00:00&quot;,&quot;total&quot;:0.0015574330000021064}}" data-execution_count="21">
+<hr>
+<p><a href="https://github.com/vedicreader/pobblebonk/blob/main/pobblebonk/heartbeat.py#L202" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="uninstall" class="level3">
+<h3 class="anchored" data-anchor-id="uninstall">uninstall</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> uninstall(</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    tag:<span class="bu">str</span><span class="op">=</span><span class="st">'pobblebonk'</span>, on:__main__.Beat<span class="op">=</span><span class="va">None</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span><span class="bu">bool</span>:</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Stop the beat. False if there was nothing scheduled.</em></p>
+</section>
+</div>
+<div id="f4a230dd" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-20T05:33:51.848550+00:00&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-20T05:33:51.849953+00:00&quot;,&quot;total&quot;:0.0014056720000041878}}" data-execution_count="22">
+<hr>
+<p><a href="https://github.com/vedicreader/pobblebonk/blob/main/pobblebonk/heartbeat.py#L198" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="installed" class="level3">
+<h3 class="anchored" data-anchor-id="installed">installed</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> installed(</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    tag:<span class="bu">str</span><span class="op">=</span><span class="st">'pobblebonk'</span>, on:__main__.Beat<span class="op">=</span><span class="va">None</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span><span class="bu">str</span>:</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>The launcher <code>tag</code> runs now, or None.</em></p>
+</section>
+</div>
+<div id="571b80b0" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-20T05:33:51.850004+00:00&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-20T05:33:51.851732+00:00&quot;,&quot;total&quot;:0.001729806000000167}}" data-execution_count="23">
+<hr>
+<p><a href="https://github.com/vedicreader/pobblebonk/blob/main/pobblebonk/heartbeat.py#L186" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="install" class="level3">
+<h3 class="anchored" data-anchor-id="install">install</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> install(</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    cmd:<span class="bu">str</span>, <span class="co"># the command one beat runs</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    dirn:NoneType<span class="op">=</span><span class="va">None</span>, <span class="co"># where the launcher goes; `~/.pobblebonk` by default</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    tag:<span class="bu">str</span><span class="op">=</span><span class="st">'pobblebonk'</span>, <span class="co"># names the launcher, its log, and the scheduled job</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    on:__main__.Beat<span class="op">=</span><span class="va">None</span>, <span class="co"># a scheduler of your own; this machine's by default</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>    every:<span class="bu">int</span><span class="op">=</span><span class="dv">60</span>, <span class="co"># seconds between portable heartbeat runs</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>pathlib.Path:</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Write the launcher for <code>cmd</code> and schedule it every <code>every</code> seconds.</em></p>
+</section>
+</div>
+<div id="016ecea6" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-20T05:33:51.851787+00:00&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-20T05:33:51.853244+00:00&quot;,&quot;total&quot;:0.0014586100000002489}}" data-execution_count="24">
+<hr>
+<p><a href="https://github.com/vedicreader/pobblebonk/blob/main/pobblebonk/heartbeat.py#L181" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="beat-1" class="level3">
+<h3 class="anchored" data-anchor-id="beat-1">beat</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> beat(</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    platform:<span class="bu">str</span><span class="op">=</span><span class="va">None</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>__main__.Beat:</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>The scheduler this machine actually has.</em></p>
+</section>
+</div>
+<div id="63a76d2b" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>test_eq(<span class="bu">type</span>(beat(<span class="st">'linux'</span>)), CronBeat)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>test_eq(<span class="bu">type</span>(beat(<span class="st">'darwin'</span>)), LaunchdBeat)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>test_eq(<span class="bu">type</span>(beat(<span class="st">'win32'</span>)), TaskBeat)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>The macOS smoke test installs a real LaunchAgent under <code>pobblebonk-demo</code>. It uses the one-minute default so the check finishes quickly. <code>/bin/date</code> appends each timestamp to <code>~/.pobblebonk/pobblebonk-demo.log</code>. These cells change the machine scheduler, so nbdev does not run them automatically.</p>
+<div id="c56fe7bf" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> launchd_smoke(tag<span class="op">=</span><span class="st">'pobblebonk-demo'</span>):</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    <span class="im">import</span> time</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    <span class="im">from</span> datetime <span class="im">import</span> datetime</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    on <span class="op">=</span> LaunchdBeat()</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>    script <span class="op">=</span> HOME<span class="op">/</span><span class="ss">f'</span><span class="sc">{</span>tag<span class="sc">}</span><span class="ss">.sh'</span></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>    log <span class="op">=</span> script.with_suffix(<span class="st">'.log'</span>)</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>    uninstall(tag, on<span class="op">=</span>on)</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>    script.unlink(missing_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>    log.unlink(missing_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>        script <span class="op">=</span> install(<span class="st">'/bin/date'</span>, tag<span class="op">=</span>tag, on<span class="op">=</span>on)</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>        test_eq(installed(tag, on<span class="op">=</span>on), <span class="bu">str</span>(script))</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">75</span>):</span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> log.exists() <span class="kw">and</span> (lines <span class="op">:=</span> log.read_text().splitlines()): <span class="cf">break</span></span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>            time.sleep(<span class="dv">1</span>)</span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>: <span class="cf">raise</span> <span class="pp">AssertionError</span>(<span class="ss">f'no timestamp reached </span><span class="sc">{</span>log<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>        datetime.strptime(lines[<span class="op">-</span><span class="dv">1</span>], <span class="st">'%a %b </span><span class="sc">%d</span><span class="st"> %H:%M:%S %Z %Y'</span>)</span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> lines[<span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">finally</span>:</span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>        uninstall(tag, on<span class="op">=</span>on)</span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a>        script.unlink(missing_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a>        log.unlink(missing_ok<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="fe57ed94" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>stamp <span class="op">=</span> launchd_smoke()</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(stamp)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Sun Aug 30 13:29:52 AEST 2026</code></pre>
+</div>
+</div>
+<div id="1fe3ffa0" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>demo_tag <span class="op">=</span> <span class="st">'pobblebonk-demo'</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>demo <span class="op">=</span> LaunchdBeat()</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>test_eq(installed(demo_tag, on<span class="op">=</span>demo), <span class="va">None</span>)</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>test_eq(demo._p(demo_tag).exists(), <span class="va">False</span>)</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>test_eq((HOME<span class="op">/</span><span class="ss">f'</span><span class="sc">{</span>demo_tag<span class="sc">}</span><span class="ss">.sh'</span>).exists(), <span class="va">False</span>)</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>test_eq((HOME<span class="op">/</span><span class="ss">f'</span><span class="sc">{</span>demo_tag<span class="sc">}</span><span class="ss">.log'</span>).exists(), <span class="va">False</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="what-this-does-not-do" class="level2">
+<h2 class="anchored" data-anchor-id="what-this-does-not-do">What this does not do</h2>
+<p>This module does not run a tick or interpret schedules. It installs one launcher that calls the tick at the configured heartbeat interval. Schedule timing stays in the database for <code>pause</code>, <code>retries</code>, and <code>catchup</code>.</p>
+<p>Two ticks can overlap when a callback takes longer than the heartbeat interval. The heartbeat does not prevent this. A database lock must serialize ticks on every supported platform.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/vedicreader\.github\.io\/pobblebonk");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/vedicreader/pobblebonk/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
