@@ -2,6 +2,9 @@
 
 <!-- do not remove -->
 
+## 0.0.6
+A fire that returns `None` or `''` and uses no items leaves no note. Before, it left a note with the text `null`.
+
 ## 0.0.5
 A schedule's `retry_after` payload key, a duration, replaces the doubling delay before a retry: `add('nightly', cron='0 3 * * *', retries=2, retry_after='1h')` gives a failed night one more try an hour later. `add` and `update` reject a value that is not a duration.
 

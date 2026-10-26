@@ -304,8 +304,8 @@ def _done(self:Pob, job, name:str, got, res) -> AttrDict:
     'Store a successful callback result and finish its fire.'
     self.q.save_result(job.id, res)
     if got: self.used(got.attrgot('id'), by=name)
-    body = res if isinstance(res, str) else json.dumps(res, default=str)
-    self.note(name, body, ref=job.id, used=len(got))
+    if res not in (None, '') or got:
+        self.note(name, res if isinstance(res, str) else json.dumps(res, default=str), ref=job.id, used=len(got))
     job.ack()
     return AttrDict(name=name, status='ok', result=res, used=len(got))
 
