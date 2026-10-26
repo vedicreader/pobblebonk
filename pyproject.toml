@@ -37,6 +37,9 @@ Documentation = "https://vedicreader.github.io/pobblebonk/"
 cron = [
     "python-crontab>=3.2",
 ]
+dev = [
+    "python-crontab>=3.2",
+]
 
 [tool.nbdev]
 
